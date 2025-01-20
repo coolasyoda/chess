@@ -31,4 +31,15 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
+
+    public void printPosition(){
+        System.out.print("POSITION: Row: ");
+        System.out.print(row);
+        System.out.print(" Col: ");
+        System.out.print(col);
+        System.out.print("\n");
+
+    }
+
+
 }

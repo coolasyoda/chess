@@ -7,7 +7,9 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] squares = new ChessPiece[8][8];
+    // I would have done 8x8 but we are using chess notation and the test functions would not like
+    // it if I started doing things using 0 indexing.
+    private ChessPiece[][] squares = new ChessPiece[9][9];
 
     public ChessBoard() {
         
