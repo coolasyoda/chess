@@ -33,19 +33,25 @@ public class ChessMoveCalculator {
                 testIndex[0] = myPosition.getRow() + row_directions[i];
                 testIndex[1] = myPosition.getColumn() + col_directions[j];
 
+
+
+
                 while(withinBoard(testIndex)){
                     // If space is occupied, check if it is the enemy. Regardless,
                     // stop the loop and go to next direction
-                    
+                    System.out.print(testIndex[0]);
+                    System.out.print(testIndex[1]);
+                    System.out.print(" ");
+
                     ChessPosition testPosition = new ChessPosition(testIndex[0], testIndex[1]);
 
-                    if(board.getPiece(testPosition) != null){
-                        if(board.getPiece(testPosition).getTeamColor() != color){
-                            finalPositions.add(testPosition);
-                        }
-
-                        break;
-                    }
+//                    if(board.getPiece(testPosition) != null){
+//                        if(board.getPiece(testPosition).getTeamColor() != color){
+//                            finalPositions.add(testPosition);
+//                        }
+//
+//                        break;
+//                    }
                     finalPositions.add(testPosition);
                     testIndex[0] = testIndex[0] + row_directions[i];
                     testIndex[1] = testIndex[1] + col_directions[j];
@@ -54,6 +60,7 @@ public class ChessMoveCalculator {
 
             }
         }
+
 
     }
 
@@ -64,11 +71,11 @@ public class ChessMoveCalculator {
         int col = testIndex[1];
 
         // Check if rows are within bounds
-        if(row >= 1 && row <= 8){
+        if(row < 1 || row > 8){
             return false;
         }
         // Check if columns are within bounds
-        if(col >= 1 && col <= 8){
+        if(col < 1 || col > 8){
             return false;
         }
 
@@ -83,10 +90,6 @@ public class ChessMoveCalculator {
             moves.add(new ChessMove(initialPosition, finalPositions.get(i), null));
         }
 
-        ChessPosition startTest = new ChessPosition(5,4);
-        ChessPosition endTest = new ChessPosition(6,3);
-
-        moves.add(new ChessMove(startTest, endTest, null));
 
 
         return moves;
