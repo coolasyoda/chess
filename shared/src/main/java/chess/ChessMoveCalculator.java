@@ -20,53 +20,15 @@ public class ChessMoveCalculator {
             BishopMoves(board, myPosition);
         } else if (type == ChessPiece.PieceType.KING) {
             KingMoves(board, myPosition);
+        } else if (type == ChessPiece.PieceType.QUEEN) {
+            QueenMoves(board, myPosition);
         }
 
         return generateMoves(myPosition);
     }
 
     private void BishopMoves(ChessBoard board, ChessPosition myPosition) {
-        int[] row_directions = {-1, 1};
-        int[] col_directions = {-1, 1};
 
-        // Checks all row directions
-        for(int i = 0; i < 2; i++){
-            // Checks all column directions
-            for(int j = 0; j < 2; j++){
-                //init test position to initial position
-                testIndex[0] = myPosition.getRow() + row_directions[i];
-                testIndex[1] = myPosition.getColumn() + col_directions[j];
-
-                while(withinBoard(testIndex)){
-                    // If space is occupied, check if it is the enemy. Regardless,
-                    // stop the loop and go to next direction
-
-                    ChessPosition testPosition = new ChessPosition(testIndex[0], testIndex[1]);
-
-
-                    if(board.getPiece(testPosition) != null){
-                        if(board.getPiece(testPosition).getTeamColor() != color){
-                            System.out.print(testIndex[0]);
-                            System.out.print(testIndex[1]);
-                            System.out.print(" ");
-                            finalPositions.add(testPosition);
-                        }
-
-                        break;
-                    }
-
-                    System.out.print(testIndex[0]);
-                    System.out.print(testIndex[1]);
-                    System.out.print(" ");
-
-                    finalPositions.add(testPosition);
-                    testIndex[0] = testIndex[0] + row_directions[i];
-                    testIndex[1] = testIndex[1] + col_directions[j];
-
-                }
-
-            }
-        }
 
 
     }
@@ -109,6 +71,52 @@ public class ChessMoveCalculator {
         }
 
     }
+
+    private void QueenMoves(ChessBoard board, ChessPosition myPosition) {
+        int[] row_directions = {-1, 0, 1};
+        int[] col_directions = {-1, 0, 1};
+
+        // Checks all row directions
+        for(int i = 0; i < 3; i++){
+            // Checks all column directions
+            for(int j = 0; j < 3; j++){
+                //init test position to initial position
+                testIndex[0] = myPosition.getRow() + row_directions[i];
+                testIndex[1] = myPosition.getColumn() + col_directions[j];
+
+                while(withinBoard(testIndex)){
+                    // If space is occupied, check if it is the enemy. Regardless,
+                    // stop the loop and go to next direction
+
+                    ChessPosition testPosition = new ChessPosition(testIndex[0], testIndex[1]);
+
+
+                    if(board.getPiece(testPosition) != null){
+                        if(board.getPiece(testPosition).getTeamColor() != color){
+                            System.out.print(testIndex[0]);
+                            System.out.print(testIndex[1]);
+                            System.out.print(" ");
+                            finalPositions.add(testPosition);
+                        }
+
+                        break;
+                    }
+
+                    System.out.print(testIndex[0]);
+                    System.out.print(testIndex[1]);
+                    System.out.print(" ");
+
+                    finalPositions.add(testPosition);
+                    testIndex[0] = testIndex[0] + row_directions[i];
+                    testIndex[1] = testIndex[1] + col_directions[j];
+
+                }
+
+            }
+        }
+
+    }
+
 
 
     private boolean withinBoard(int[] testIndex){
