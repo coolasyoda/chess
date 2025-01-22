@@ -12,6 +12,7 @@ public class ChessMove {
 
     private final ChessPosition startPosition;
     private final ChessPosition endPosition;
+    private ChessPiece.PieceType promotionPiece = null;
 
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
@@ -19,19 +20,16 @@ public class ChessMove {
 
         this.startPosition = startPosition;
         this.endPosition = endPosition;
-        System.out.print("NEW MOVE: ");
-        System.out.print(startPosition.getRow());
-        System.out.print(" ");
-        System.out.print(startPosition.getColumn());
-        System.out.print(" to ");
-        System.out.print(endPosition.getRow());
-        System.out.print(" ");
-        System.out.print(endPosition.getColumn());
-        System.out.print("\n");
-
-
-
-
+        this.promotionPiece = promotionPiece;
+//        System.out.print("NEW MOVE: ");
+//        System.out.print(startPosition.getRow());
+//        System.out.print(" ");
+//        System.out.print(startPosition.getColumn());
+//        System.out.print(" to ");
+//        System.out.print(endPosition.getRow());
+//        System.out.print(" ");
+//        System.out.print(endPosition.getColumn());
+//        System.out.print("\n");
 
 
     }
@@ -57,12 +55,7 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        return null;
-//        if(endPosition.getRow() == 1 || endPosition.getRow() == 8){
-//            return ChessPiece.PieceType.QUEEN;
-//        }
-//        else return null;
-
+        return promotionPiece;
     }
 
     @Override

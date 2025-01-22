@@ -1,7 +1,9 @@
 package chess;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 public class ChessMoveCalculator {
     private ChessPiece.PieceType type;
@@ -309,5 +311,17 @@ public class ChessMoveCalculator {
         return moves;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessMoveCalculator that = (ChessMoveCalculator) o;
+        return pawn == that.pawn && type == that.type && color == that.color && Objects.equals(finalPositions, that.finalPositions) && Objects.deepEquals(testIndex, that.testIndex);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, color, finalPositions, Arrays.hashCode(testIndex), pawn);
+    }
 }
