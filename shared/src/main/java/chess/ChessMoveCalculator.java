@@ -106,12 +106,10 @@ public class ChessMoveCalculator {
                 ChessPosition testPosition = new ChessPosition(testIndex[0], testIndex[1]);
 
                 if(withinBoard(testIndex)){
-                    if(board.getPiece(testPosition) != null){
-                        if(board.getPiece(testPosition).getTeamColor() != color){
+                    if(board.getPiece(testPosition) != null && board.getPiece(testPosition).getTeamColor() != color){
                             finalPositions.add(testPosition);
-                        }
                     }
-                    else {
+                    else if (board.getPiece(testPosition) == null){
                         finalPositions.add(testPosition);
                     }
                 }
