@@ -40,7 +40,6 @@ public class ChessPosition {
         System.out.print(" Col: ");
         System.out.print(col);
         System.out.print("\n");
-
     }
 
     @Override
