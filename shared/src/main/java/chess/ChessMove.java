@@ -21,16 +21,6 @@ public class ChessMove {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.promotionPiece = promotionPiece;
-//        System.out.print("NEW MOVE: ");
-//        System.out.print(startPosition.getRow());
-//        System.out.print(" ");
-//        System.out.print(startPosition.getColumn());
-//        System.out.print(" to ");
-//        System.out.print(endPosition.getRow());
-//        System.out.print(" ");
-//        System.out.print(endPosition.getColumn());
-//        System.out.print("\n");
-
 
     }
 

@@ -47,10 +47,6 @@ public class ChessBoard {
 
         ChessPiece[][] board = new ChessPiece[8][8];
 
-        // CHANGE THINGS TO ADD PIECE!!!
-        // new ChessPiece -> add chess piece into the new board above
-
-
         //Iterates over all squares except top and bottom rows
         //Rows
         for(int i=0; i<8; i++){
@@ -86,8 +82,6 @@ public class ChessBoard {
         board[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
 
         squares = board;
-
-        printBoard();
     }
 
     public void printBoard(){
