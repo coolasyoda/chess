@@ -3,6 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -17,7 +18,6 @@ public class ChessGame {
 
     public ChessGame() {
         board = new ChessBoard();
-
     }
 
     /**
@@ -62,7 +62,50 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        board.printBoard();
+        move.printMove();
+
+        //No piece moved exception
+        if(board.getPiece(move.getStartPosition()) == null){
+            throw new chess.InvalidMoveException("NO PIECE MOVED");
+        }
+
+        //Wrong Turn Exception
+        if(teamTurn != board.getPiece(move.getStartPosition()).getTeamColor()){
+            throw new chess.InvalidMoveException("WRONG TURN");
+        }
+
+        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) board.getPiece(move.getStartPosition()).pieceMoves(board, move.getStartPosition());
+
+        // Check every valid move. If "move" is not there, it is invalid.
+        for(int i=0; i<validMoves.size(); i++){
+
+            validMoves.get(i).printMove();
+            if(validMoves.get(i).equals(move)){
+                ChessPiece piece;
+
+                if(move.getPromotionPiece() != null){
+                    piece = new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
+                }
+                else{
+                    piece = board.getPiece(move.getStartPosition());
+                }
+
+                board.addPiece(move.getStartPosition(), null);
+                board.addPiece(move.getEndPosition(), piece);
+                board.printBoard();
+
+                if(teamTurn.equals(TeamColor.WHITE)){
+                    teamTurn = TeamColor.BLACK;
+                }
+                else {
+                    teamTurn = TeamColor.WHITE;
+                }
+
+                return;
+            }
+        }
+        throw new chess.InvalidMoveException("INVALID MOVE");
     }
 
     /**
@@ -102,7 +145,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        board.resetBoard();
+        this.board = board;
     }
 
     /**
@@ -114,6 +157,17 @@ public class ChessGame {
         return board;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(board, teamTurn);
+    }
 }

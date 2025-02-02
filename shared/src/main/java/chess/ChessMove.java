@@ -48,14 +48,22 @@ public class ChessMove {
         return promotionPiece;
     }
 
+    public void printMove(){
+        System.out.print("MOVE: ");
+        System.out.print(startPosition.getRow());
+        System.out.print(startPosition.getColumn());
+        System.out.print(" to ");
+        System.out.print(endPosition.getRow());
+        System.out.println(endPosition.getColumn());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(startPosition, chessMove.startPosition)
-                && Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
+        return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
     }
 
     @Override
