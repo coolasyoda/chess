@@ -51,8 +51,28 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        return new ChessMoveCalculator().pieceMoves(getBoard(), startPosition);
+
+    // Gets list of "valid" moves from ChessMoveCalculator(). Then it makes each move and checks if the king
+    // is in check. If it is, remove from the array.
+    public Collection<ChessMove> validMoves(ChessPosition startPosition){
+        ArrayList<ChessMove> possibleMoves = new ChessMoveCalculator().pieceMoves(getBoard(), startPosition);
+        ArrayList<ChessMove> goodMoves = new ArrayList<>();
+        ChessBoard originalBoard = board;
+
+        for(int i=0; i<possibleMoves.size(); i++){
+            try {
+                makeMove(possibleMoves.get(i));
+            } catch (InvalidMoveException e) {
+                throw new RuntimeException(e);
+            }
+            if(!isInCheck(teamTurn)){
+                goodMoves.add(possibleMoves.get(i));
+            }
+
+            board = originalBoard;
+        }
+
+        return goodMoves;
     }
 
     /**
@@ -62,9 +82,6 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        board.printBoard();
-        move.printMove();
-
         //No piece moved exception
         if(board.getPiece(move.getStartPosition()) == null){
             throw new InvalidMoveException("NO PIECE MOVED");
@@ -75,10 +92,15 @@ public class ChessGame {
             throw new InvalidMoveException("WRONG TURN");
         }
 
+        //I know this doesn't call the validMoves() function, but the way I implemented it means that it's recursion
+        //overflows the stack so I just check if a piece is in check afterwords instead of removing the invalid
+        //moves from this array.
         ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) board.getPiece(move.getStartPosition()).pieceMoves(board, move.getStartPosition());
 
         // Check every valid move. If "move" is not there, it is invalid.
         for(int i=0; i<validMoves.size(); i++){
+            board.printBoard();
+            move.printMove();
 
             validMoves.get(i).printMove();
             if(validMoves.get(i).equals(move)){
@@ -91,8 +113,18 @@ public class ChessGame {
                     piece = board.getPiece(move.getStartPosition());
                 }
 
+                ChessPiece tempPiece = board.getPiece(move.getEndPosition());
+
                 board.addPiece(move.getStartPosition(), null);
                 board.addPiece(move.getEndPosition(), piece);
+
+                //If is in check, undo move and throw exception
+                if(isInCheck(teamTurn)){
+                    board.addPiece(move.getEndPosition(), tempPiece);
+                    board.addPiece(move.getStartPosition(), piece);
+                    throw new InvalidMoveException("MOVE PUTS KING IN CHECK");
+                }
+
                 board.printBoard();
 
                 if(teamTurn.equals(TeamColor.WHITE)){
@@ -123,14 +155,13 @@ public class ChessGame {
         ChessPosition kingPosition = null;
         ArrayList<ChessPosition> enemyEndPositions = new ArrayList<>();
 
-
-
         for(int i=1; i<=8; i++){
             for(int j=1; j<=8; j++){
+
                 testPosition = new ChessPosition(i, j);
                 if(board.getPiece(testPosition) != null){
                     if(board.getPiece(testPosition).getTeamColor() != teamColor){
-                        ArrayList<ChessMove> pieceMoves = (ArrayList<ChessMove>) validMoves(testPosition);
+                        ArrayList<ChessMove> pieceMoves = new ChessMoveCalculator().pieceMoves(board, testPosition);
 
                         // Add all the end positions to the array
                         for(int k=0; k<pieceMoves.size(); k++){

@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Objects;
 
 public class ChessMoveCalculator {
@@ -12,7 +11,7 @@ public class ChessMoveCalculator {
     private int[] testIndex = new int[2]; //row column
     private boolean pawn = false;
 
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         finalPositions.clear();
         type = board.getPiece(myPosition).getPieceType();
         color = board.getPiece(myPosition).getTeamColor();
@@ -32,7 +31,7 @@ public class ChessMoveCalculator {
             pawn = true;
         }
 
-        return generateMoves(myPosition);
+        return generateMoves(board, myPosition);
     }
 
     private void bishopMoves(ChessBoard board, ChessPosition myPosition) {
@@ -229,8 +228,10 @@ public class ChessMoveCalculator {
     }
 
     //Takes the initial and final positions and generates a Collection of valid moves
-    private Collection<ChessMove> generateMoves(ChessPosition initialPosition){
+    private ArrayList<ChessMove> generateMoves(ChessBoard board, ChessPosition initialPosition){
         ArrayList<ChessMove> moves = new ArrayList<>();
+
+        ChessBoard testBoard = board;
 
         if(!pawn){
             for(int i=0; i<finalPositions.size(); i++){
