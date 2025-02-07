@@ -62,7 +62,6 @@ public class ChessGame {
         for(int i=0; i<possibleMoves.size(); i++){
             if(tryMove(possibleMoves.get(i))){
                 goodMoves.add(possibleMoves.get(i));
-                possibleMoves.get(i).printMove();
             }
         }
 
@@ -90,7 +89,9 @@ public class ChessGame {
         ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) validMoves(move.getStartPosition());
         for(int i=0; i<validMoves.size(); i++){
             if(validMoves.get(i).equals(move) && tryMove(move)){
+                board.printBoard();
                 movePiece(move);
+                board.printBoard();
 
                 if(teamTurn == TeamColor.WHITE){
                     teamTurn = TeamColor.BLACK;
@@ -122,7 +123,6 @@ public class ChessGame {
 
 
         tempGame.setBoard(tempBoard);
-        System.out.print("TRY ");
         tempGame.movePiece(move);
 
         if(board.getPiece(move.getStartPosition()) != null && tempGame.isInCheck(board.getPiece(move.getStartPosition()).getTeamColor())){
@@ -135,12 +135,17 @@ public class ChessGame {
 
     //Executes move
     private void movePiece(ChessMove move){
-        ChessPiece piece = board.getPiece(move.getStartPosition());
+        ChessPiece piece;
+
+        if(move.getPromotionPiece() != null){
+            piece = new ChessPiece(teamTurn, move.getPromotionPiece());
+        }
+        else{
+            piece = board.getPiece(move.getStartPosition());
+        }
+
         board.addPiece(move.getEndPosition(), piece);
         board.addPiece(move.getStartPosition(), null);
-
-        System.out.print("MADE MOVE: ");
-        move.printMove();
     }
 
     /**
