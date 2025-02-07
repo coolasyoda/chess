@@ -89,9 +89,7 @@ public class ChessGame {
         ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) validMoves(move.getStartPosition());
         for(int i=0; i<validMoves.size(); i++){
             if(validMoves.get(i).equals(move) && tryMove(move)){
-                board.printBoard();
                 movePiece(move);
-                board.printBoard();
 
                 if(teamTurn == TeamColor.WHITE){
                     teamTurn = TeamColor.BLACK;
@@ -233,9 +231,9 @@ public class ChessGame {
             for(int j=1; j<=8; j++){
                 testPosition = new ChessPosition(i,j);
                 if(board.getPiece(testPosition) != null && board.getPiece(testPosition).getTeamColor() == teamColor){
-                    testPosition.printPosition();
-                    System.out.println(validMoves(testPosition).size());
-
+                    if(validMoves(testPosition).size() != 0){
+                        return false;
+                    }
                 }
             }
         }
