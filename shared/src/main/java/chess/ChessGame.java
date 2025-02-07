@@ -58,30 +58,12 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition){
         ArrayList<ChessMove> possibleMoves = new ChessMoveCalculator().pieceMoves(getBoard(), startPosition);
         ArrayList<ChessMove> goodMoves = new ArrayList<>();
-        ChessBoard originalBoard = board;
 
         for(int i=0; i<possibleMoves.size(); i++){
-            try {
-                makeMove(possibleMoves.get(i));
-                if(!isInCheck(teamTurn)){
-                    goodMoves.add(possibleMoves.get(i));
-                }
-
-            } catch (InvalidMoveException e) {
-
+            if(tryMove(possibleMoves.get(i))){
+                goodMoves.add(possibleMoves.get(i));
+                possibleMoves.get(i).printMove();
             }
-
-            setBoard(originalBoard);
-        }
-
-        for(int i=0; i<possibleMoves.size(); i++){
-            possibleMoves.get(i).printMove();
-        }
-
-        System.out.println("\n");
-
-        for(int i=0; i<goodMoves.size(); i++){
-            goodMoves.get(i).printMove();
         }
 
         return goodMoves;
@@ -94,6 +76,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+
         //No piece moved exception
         if(board.getPiece(move.getStartPosition()) == null){
             throw new InvalidMoveException("NO PIECE MOVED");
@@ -104,47 +87,60 @@ public class ChessGame {
             throw new InvalidMoveException("WRONG TURN");
         }
 
-
-        //I know this doesn't call the validMoves() function, but the way I implemented it means that it's recursion
-        //overflows the stack so I just check if a piece is in check afterwords instead of removing the invalid
-        //moves from this array.
-        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) board.getPiece(move.getStartPosition()).pieceMoves(board, move.getStartPosition());
-
-        // Check every valid move. If "move" is not there, it is invalid.
+        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) validMoves(move.getStartPosition());
         for(int i=0; i<validMoves.size(); i++){
-            if(validMoves.get(i).equals(move)){
-                ChessPiece piece;
+            if(validMoves.get(i).equals(move) && tryMove(move)){
+                movePiece(move);
 
-                if(move.getPromotionPiece() != null){
-                    piece = new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
-                }
-                else{
-                    piece = board.getPiece(move.getStartPosition());
-                }
-
-                ChessPiece tempPiece = board.getPiece(move.getEndPosition());
-
-                board.addPiece(move.getStartPosition(), null);
-                board.addPiece(move.getEndPosition(), piece);
-
-                //If is in check, undo move and throw exception
-                if(isInCheck(teamTurn)){
-                    board.addPiece(move.getEndPosition(), tempPiece);
-                    board.addPiece(move.getStartPosition(), piece);
-                    throw new InvalidMoveException("MOVE PUTS KING IN CHECK");
-                }
-
-                if(teamTurn.equals(TeamColor.WHITE)){
+                if(teamTurn == TeamColor.WHITE){
                     teamTurn = TeamColor.BLACK;
                 }
-                else {
+                else{
                     teamTurn = TeamColor.WHITE;
                 }
-
                 return;
+
+            } else if (validMoves.get(i).equals(move) && !tryMove(move)) {
+                throw new InvalidMoveException("PUTS KING IN CHECK");
             }
         }
         throw new InvalidMoveException("INVALID MOVE");
+    }
+
+    //Returns true if move puts king in check
+    private boolean tryMove(ChessMove move) {
+        ChessGame tempGame = new ChessGame();
+        ChessBoard tempBoard = new ChessBoard();
+        ChessPosition tempPosition;
+        for(int i=1; i<=8; i++){
+            for(int j=1; j<=8; j++){
+                tempPosition = new ChessPosition(i,j);
+                tempBoard.addPiece(tempPosition, board.getPiece(tempPosition));
+            }
+        }
+
+
+
+        tempGame.setBoard(tempBoard);
+        System.out.print("TRY ");
+        tempGame.movePiece(move);
+
+        if(board.getPiece(move.getStartPosition()) != null && tempGame.isInCheck(board.getPiece(move.getStartPosition()).getTeamColor())){
+            return false;
+        }
+
+        return true;
+
+    }
+
+    //Executes move
+    private void movePiece(ChessMove move){
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+        board.addPiece(move.getEndPosition(), piece);
+        board.addPiece(move.getStartPosition(), null);
+
+        System.out.print("MADE MOVE: ");
+        move.printMove();
     }
 
     /**
