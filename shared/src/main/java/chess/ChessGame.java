@@ -165,18 +165,19 @@ public class ChessGame {
             for(int j=1; j<=8; j++){
 
                 testPosition = new ChessPosition(i, j);
-                if(board.getPiece(testPosition) != null){
-                    if(board.getPiece(testPosition).getTeamColor() != teamColor){
-                        ArrayList<ChessMove> pieceMoves = new ChessMoveCalculator().pieceMoves(board, testPosition);
+                if(board.getPiece(testPosition) != null && board.getPiece(testPosition).getTeamColor() != teamColor) {
 
-                        // Add all the end positions to the array
-                        for(int k=0; k<pieceMoves.size(); k++){
-                            enemyEndPositions.add(pieceMoves.get(k).getEndPosition());
-                        }
+                    ArrayList<ChessMove> pieceMoves = new ChessMoveCalculator().pieceMoves(board, testPosition);
+
+                    // Add all the end positions to the array
+                    for (int k = 0; k < pieceMoves.size(); k++) {
+                        enemyEndPositions.add(pieceMoves.get(k).getEndPosition());
                     }
-                    else if(board.getPiece(testPosition).getPieceType().equals(ChessPiece.PieceType.KING)){
-                        kingPosition = testPosition;
-                    }
+
+                }
+                else if (board.getPiece(testPosition) != null && board.getPiece(testPosition).getPieceType().equals(ChessPiece.PieceType.KING)) {
+                    kingPosition = testPosition;
+
                 }
             }
         }
