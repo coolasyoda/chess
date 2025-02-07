@@ -231,8 +231,6 @@ public class ChessMoveCalculator {
     private ArrayList<ChessMove> generateMoves(ChessBoard board, ChessPosition initialPosition){
         ArrayList<ChessMove> moves = new ArrayList<>();
 
-        ChessBoard testBoard = board;
-
         if(!pawn){
             for(int i=0; i<finalPositions.size(); i++){
                 moves.add(new ChessMove(initialPosition, finalPositions.get(i), null));
