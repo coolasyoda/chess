@@ -23,8 +23,9 @@ Server --> Client: 200\n{"username" : " ", "authToken" : " "}
 end
 
 group #orange Login #white
-Client -> Server: [POST] /session\n{"username":" ", "password":" "}
-Server -> Handler: {"username":" ", "password":" "}
+Client -> Server: [POST] /session\n{ "username":"", "password":"" }
+
+Server -> Handler: { "username":"", "password":"" }
 Handler -> Service: login(LoginRequest)
 Service-> DataAccess: getUser(username)
 DataAccess -> db:Find UserData by username
@@ -34,8 +35,8 @@ Service -> DataAccess:createAuth(authData)
 DataAccess -> db:Add AuthData
 
 Service --> Handler: LoginResult
-Handler --> Server: {"validLogin":" ", "authToken"}
-Server --> Client: 201\n{"validLogin":" ", "authToken"}
+Handler --> Server: { "username":"", "authToken":"" }
+Server --> Client: 200\n{ "username":"", "authToken":"" }
 
 end
 
@@ -49,8 +50,8 @@ DataAccess --> Service: authData
 Service -> DataAccess:deleteSession(authData)
 DataAccess -> db:Remove authToken
 Service --> Handler: LogoutResult
-Handler --> Server: {"logout":" "}
-Server --> Client: 202\n{"logout":" "}
+Handler --> Server: {}
+Server --> Client: 200\n{}
 end
 
 group #red List Games #white
@@ -64,14 +65,14 @@ Service-> DataAccess: getGames()
 DataAccess -> db:Get Games
 DataAccess --> Service: Collection<game>
 Service --> Handler: GamesList
-Handler --> Server: {"games":" "}
-Server --> Client: 203\n{"games":" "}
+Handler --> Server: { "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
+Server --> Client: 200\n{ "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
 
 end
 
 group #purple Create Game #white
-Client -> Server: [POST] /game\nauthToken\n{gameName}
-Server -> Handler: {"authToken":" ", "gameName":" "}
+Client -> Server: [POST] /game\nauthToken\n{ "gameName":"" }
+Server -> Handler: { "gameName":"" }
 Handler -> Service: games(NewRequest)
 Service-> DataAccess: getSession(authToken)
 DataAccess -> db:Find authData by authToken
@@ -83,31 +84,33 @@ Service -> DataAccess:newGame(gameName)
 DataAccess -> db:Add gameData
 
 Service --> Handler: game
-Handler --> Server: {"gameID":" "}
-Server --> Client: 204\n{"gameID":" "}
+Handler --> Server: { "gameID": 1234 }
+Server --> Client: 200\n{ "gameID": 1234 }
 end
 
 group #yellow Join Game #black
 Client -> Server: [PUT] /game\nauthToken\n{playerColor, gameID}
 Server -> Handler: {"authToken":" ", "gameID":" "}
 Handler -> Service: games(JoinRequest)
+Service-> DataAccess: getSession(authToken)
+DataAccess -> db:Find authData by authToken
+DataAccess --> Service: authData
 Service-> DataAccess: joinGame(authToken, gameID)
 DataAccess -> db:Get gameID by authToken
 DataAccess --> Service: game
-Service --> Handler: game
-Handler --> Server: {"gameStatus":" "}
-Server --> Client: 204\n{"gameStatus":" "}
+Service --> Handler: {}
+Handler --> Server: {}
+Server --> Client: 200\n{}
 end
 
 group #gray Clear application #white
 Client -> Server: [DELETE] /db
-Server -> Handler: {"":" ", "gameName":" "}
-Handler -> Service: games(NewRequest)
-Service-> DataAccess: newGame(authToken)
+Server -> Handler: {}
+Handler -> Service: db(Clear)
+Service-> DataAccess: db(Clear)
 DataAccess -> db:Clear db
 DataAccess --> Service: cleared
 Service --> Handler: cleared
-Handler --> Server: 
-Server --> Client: 206
+Handler --> Server: {}
+Server --> Client: 200\n{}
 end
-
