@@ -108,6 +108,13 @@ Client -> Server: [DELETE] /db
 Server -> Handler: {}
 Handler -> Service: db(Clear)
 Service-> DataAccess: db(Clear)
+DataAccess -> db:Clear db
+DataAccess --> Service: cleared
+Service --> Handler: cleared
+Handler --> Server: {}
+Server --> Client: 200\n{}
+end
+
 
 
 
