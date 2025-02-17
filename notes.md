@@ -95,7 +95,7 @@ Handler -> Service: games(JoinRequest)
 Service-> DataAccess: getSession(authToken)
 DataAccess -> db:Find authData by authToken
 DataAccess --> Service: authData
-Service-> DataAccess: joinGame(authToken, gameID, color)
+Service-> DataAccess: joinGame(username, gameID, color)
 DataAccess -> db:Update gameData by gameID
 DataAccess --> Service: game
 Service --> Handler: {}
