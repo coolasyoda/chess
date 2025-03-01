@@ -1,7 +1,5 @@
 import chess.*;
-//import dataaccess.MemoryDataAccess;
-//import dataaccess.MySqlDataAccess;
-//import service.PetService;
+import server.Server;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,15 +11,9 @@ public class Main {
                 port = Integer.parseInt(args[0]);
             }
 
-//            DataAccess dataAccess = new UserDataAccess();
-//            if (args.length >= 2 && args[1].equals("sql")) {
-//                dataAccess = new MySqlDataAccess();
-//            }
-
-//            var service = new Service(dataAccess);
-//            var server = new Server(service).run(port);
-//            port = server.port();
-//            System.out.printf("Server started on port %d with %s%n", port, dataAccess.getClass());
+            Server server = new Server();
+            port = server.run(port);
+            System.out.printf("Server started on port %d", port);
             return;
         } catch (Throwable ex) {
             System.out.printf("Unable to start server: %s%n", ex.getMessage());
