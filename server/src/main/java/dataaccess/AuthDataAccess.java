@@ -1,6 +1,23 @@
 package dataaccess;
 
+import model.AuthData;
+import model.UserData;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class AuthDataAccess {
+
+    private final Map<String, AuthData> userDataMap = new HashMap<>();
+
+    public AuthDataAccess(){
+
+    }
+
+    public void addAuthData(AuthData authData){
+        userDataMap.put(authData.username(), authData);
+    }
+
     // REGISTRATION:
     // Add AuthData
 

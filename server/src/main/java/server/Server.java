@@ -1,11 +1,19 @@
 package server;
 
+import dataaccess.AuthDataAccess;
+import dataaccess.UserDataAccess;
+import service.UserService;
 import spark.*;
 
 public class Server {
 
-    public Server(){
+    UserHandler userHandler;
+    UserDataAccess userDataAccess = new UserDataAccess();
+    AuthDataAccess authDataAccess = new AuthDataAccess();
 
+    public Server(){
+        UserService userService = new UserService(userDataAccess, authDataAccess);
+        userHandler = new UserHandler(userService);
     }
 
     public int run(int desiredPort) {
@@ -16,7 +24,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
-        //Spark.register("/register", UserHandler::register);
+        Spark.post("/user", userHandler::register);
 
 
 
