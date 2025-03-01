@@ -110,6 +110,7 @@ Handler -> Service: db(Clear)
 Service-> DataAccess: users(Clear)
 DataAccess -> db:Clear users
 Service-> DataAccess: authTokens(Clear)
+end
 DataAccess -> db:Clear authTokens
 Service-> DataAccess: games(Clear)
 DataAccess -> db:Clear games
