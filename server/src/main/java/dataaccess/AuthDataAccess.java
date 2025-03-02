@@ -27,8 +27,9 @@ public class AuthDataAccess {
         return false;
     }
 
-    public boolean validAuthToken(String authToken){
-        return userDataMap.get(authToken) != null;
+    //returns the username
+    public String validAuthToken(String authToken){
+        return userDataMap.get(authToken);
     }
 
     public void clear(){

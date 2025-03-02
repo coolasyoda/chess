@@ -18,8 +18,11 @@ public class GameService {
         return gameDataAccess.newGame(game);
     }
 
-    public boolean validateUser(String authToken){
+    public String validateUser(String authToken){
         return authDataAccess.validAuthToken(authToken);
     }
 
+    public GameData joinGame(Integer gameID, String username, String playerColor) {
+        return gameDataAccess.joinGame(gameID, username, playerColor);
+    }
 }
