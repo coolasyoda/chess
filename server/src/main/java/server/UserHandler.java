@@ -17,11 +17,19 @@ public class UserHandler {
         this.userService = userService;
     }
 
-    // REGISTRATION:
     public Object register(Request request, Response response){
         UserData userData = gson.fromJson(request.body(), UserData.class);
+
+        // Check if the username and password fields are filled
+        if(userData.username() == null || userData.password() == null){
+            System.out.println("Username or Password empty");
+            response.status(400);
+            return gson.toJson(Map.of("message", "Error: bad request"));
+        }
+
         System.out.println("Registering User: " + userData.username());
 
+        // Make sure the username isn't taken
         if(userService.getUser(userData.username()) != null){
             System.out.println("Username: " + userData.username() + " is already taken.");
             response.status(403);
@@ -29,7 +37,6 @@ public class UserHandler {
         }
 
         AuthData authData = userService.registerUser(userData);
-
         return gson.toJson(authData);
     }
 
@@ -37,14 +44,15 @@ public class UserHandler {
         UserData userData = gson.fromJson(request.body(), UserData.class);
         System.out.println("Logging In User: " + userData.username());
 
+        // Check to see if the user exists
         if(userService.getUser(userData.username()) == null){
             System.out.println("Username: " + userData.username() + " does not exist.");
-            response.status(500);
-            return gson.toJson(Map.of("message", "Error: user not registered"));
+            response.status(401);
+            return gson.toJson(Map.of("message", "Error: unauthorized"));
         }
 
+        // Returns the authData if login is valid, null otherwise
         AuthData authData = userService.loginUser(userData);
-
         if(authData == null){
             response.status(401);
             return gson.toJson(Map.of("message", "Error: unauthorized"));
@@ -54,6 +62,16 @@ public class UserHandler {
         return  gson.toJson(authData);
     }
 
-    // LOGOUT:
-    // delete(SessionRequest)
+    public Object logout(Request request, Response response){
+        String authToken = request.headers("authorization");
+
+        if(userService.logoutUser(authToken)){
+            response.status(200);
+            return "";
+        }
+
+        response.status(401);
+        return gson.toJson(Map.of("message", "Error: unauthorized"));
+    }
+
 }

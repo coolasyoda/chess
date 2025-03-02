@@ -26,6 +26,7 @@ public class Server {
         Spark.delete("/db", this::clear);
         Spark.post("/user", userHandler::register);
         Spark.post("/session", userHandler::login);
+        Spark.delete("/session", userHandler::logout);
 
 
 

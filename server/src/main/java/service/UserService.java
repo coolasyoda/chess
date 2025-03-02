@@ -44,6 +44,10 @@ public class UserService {
         return null;
     }
 
+    public boolean logoutUser(String authToken){
+        return authDataAccess.removeAuthData(authToken);
+    }
+
 
 
 

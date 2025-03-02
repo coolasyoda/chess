@@ -5,17 +5,26 @@ import model.UserData;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class AuthDataAccess {
 
-    private final Map<String, AuthData> userDataMap = new HashMap<>();
+    private final Map<String, String> userDataMap = new HashMap<>();
 
     public AuthDataAccess(){
 
     }
 
     public void addAuthData(AuthData authData){
-        userDataMap.put(authData.username(), authData);
+        userDataMap.put(authData.authToken(), authData.username());
+    }
+
+    public boolean removeAuthData(String authToken){
+        if(userDataMap.get(authToken) != null){
+            userDataMap.remove(authToken);
+            return true;
+        }
+        return false;
     }
 
     // REGISTRATION:
