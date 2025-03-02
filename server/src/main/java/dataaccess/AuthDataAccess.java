@@ -27,6 +27,10 @@ public class AuthDataAccess {
         return false;
     }
 
+    public boolean validAuthToken(String authToken){
+        return userDataMap.get(authToken) != null;
+    }
+
     public void clear(){
         userDataMap.clear();
     }

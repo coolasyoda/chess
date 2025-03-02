@@ -1,19 +1,27 @@
 package server;
 
 import dataaccess.AuthDataAccess;
+import dataaccess.GameDataAccess;
 import dataaccess.UserDataAccess;
+import service.GameService;
 import service.UserService;
 import spark.*;
 
 public class Server {
 
     UserHandler userHandler;
+    GameHandler gameHandler;
+
     UserDataAccess userDataAccess = new UserDataAccess();
     AuthDataAccess authDataAccess = new AuthDataAccess();
+    GameDataAccess gameDataAccess = new GameDataAccess();
 
     public Server(){
         UserService userService = new UserService(userDataAccess, authDataAccess);
+        GameService gameService = new GameService(gameDataAccess, authDataAccess);
+
         userHandler = new UserHandler(userService);
+        gameHandler = new GameHandler(gameService);
     }
 
     public int run(int desiredPort) {
@@ -27,6 +35,7 @@ public class Server {
         Spark.post("/user", userHandler::register);
         Spark.post("/session", userHandler::login);
         Spark.delete("/session", userHandler::logout);
+        Spark.post("/game", gameHandler::createGame);
 
 
 
