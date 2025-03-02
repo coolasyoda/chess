@@ -25,7 +25,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
         Spark.post("/user", userHandler::register);
-
+        Spark.post("/session", userHandler::login);
 
 
 
@@ -44,9 +44,9 @@ public class Server {
         return Spark.port();
     }
 
-    public Object clear(Request req, Response res){
+    public Object clear(Request request, Response response){
         System.out.println("Clear Called");
-        res.status(200);
+        response.status(200);
         return "";
     }
 
