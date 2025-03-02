@@ -47,6 +47,8 @@ public class Server {
 
     public Object clear(Request request, Response response){
         System.out.println("Clear Called");
+        userDataAccess.clear();
+        authDataAccess.clear();
         response.status(200);
         return "";
     }

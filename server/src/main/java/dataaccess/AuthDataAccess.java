@@ -27,6 +27,10 @@ public class AuthDataAccess {
         return false;
     }
 
+    public void clear(){
+        userDataMap.clear();
+    }
+
     // REGISTRATION:
     // Add AuthData
 

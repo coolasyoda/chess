@@ -11,6 +11,8 @@ public class GameDataAccess {
     // JOIN GAME
     // Update gameData by gameID
 
+    public void clear(){
 
+    }
 
 }

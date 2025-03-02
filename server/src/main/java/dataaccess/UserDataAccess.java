@@ -27,6 +27,10 @@ public class UserDataAccess {
         }
     }
 
+    public void clear(){
+        userDataMap.clear();
+    }
+
 
 
     // REGISTRATION:
