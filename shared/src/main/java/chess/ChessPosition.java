@@ -34,13 +34,13 @@ public class ChessPosition {
         return col;
     }
 
-    public void printPosition(){
-        System.out.print("POSITION: Row: ");
-        System.out.print(row);
-        System.out.print(" Col: ");
-        System.out.print(col);
-        System.out.print("\n");
-    }
+//    public void printPosition(){
+//        System.out.print("POSITION: Row: ");
+//        System.out.print(row);
+//        System.out.print(" Col: ");
+//        System.out.print(col);
+//        System.out.print("\n");
+//    }
 
     @Override
     public boolean equals(Object o) {

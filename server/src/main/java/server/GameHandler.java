@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class GameHandler {
 
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
     GameService gameService;
 
 
@@ -25,32 +25,32 @@ public class GameHandler {
 
     public Object createGame(Request request, Response response) {
         String authToken = request.headers("authorization");
-        GameData game = gson.fromJson(request.body(), GameData.class);
+        GameData game = GSON.fromJson(request.body(), GameData.class);
 
         if(gameService.validateUser(authToken) == null){
             response.status(401);
-            return gson.toJson(Map.of("message", "Error: unauthorized"));
+            return GSON.toJson(Map.of("message", "Error: unauthorized"));
         }
 
         game = gameService.createGame(game);
 
         if(game == null){
             response.status(400);
-            return gson.toJson(Map.of("message", "Error: bad request"));
+            return GSON.toJson(Map.of("message", "Error: bad request"));
         }
 
         response.status(200);
-        return gson.toJson(game);
+        return GSON.toJson(game);
     }
 
     public Object joinGame(Request request, Response response) {
         String authToken = request.headers("authorization");
 
-        JsonObject gameRequest = gson.fromJson(request.body(), JsonObject.class);
+        JsonObject gameRequest = GSON.fromJson(request.body(), JsonObject.class);
 
         if(!gameRequest.has("playerColor") || !gameRequest.has("gameID")){
             response.status(400);
-            return gson.toJson(Map.of("message", "Error: bad request"));
+            return GSON.toJson(Map.of("message", "Error: bad request"));
         }
 
         System.out.println("Raw Request Body: " + request.body());
@@ -62,19 +62,19 @@ public class GameHandler {
 
         if(!(playerColor.equals("WHITE") || playerColor.equals("BLACK"))){
             response.status(400);
-            return gson.toJson(Map.of("message", "Error: bad request"));
+            return GSON.toJson(Map.of("message", "Error: bad request"));
         }
 
         if(username == null){
             response.status(401);
-            return gson.toJson(Map.of("message", "Error: unauthorized"));
+            return GSON.toJson(Map.of("message", "Error: unauthorized"));
         }
 
         GameData joinedGame = gameService.joinGame(gameID, username, playerColor);
 
         if(joinedGame == null){
             response.status(403);
-            return gson.toJson(Map.of("message", "Error: already taken"));
+            return GSON.toJson(Map.of("message", "Error: already taken"));
         }
 
         response.status(200);
@@ -86,7 +86,7 @@ public class GameHandler {
 
         if(gameService.validateUser(authToken) == null){
             response.status(401);
-            return gson.toJson(Map.of("message", "Error: unauthorized"));
+            return GSON.toJson(Map.of("message", "Error: unauthorized"));
         }
 
         List<GameData> games = gameService.listGames();
@@ -95,7 +95,7 @@ public class GameHandler {
         System.out.println(games.toString());
 
         response.status(200);
-        return gson.toJson(gamesList);
+        return GSON.toJson(gamesList);
     }
 
 }

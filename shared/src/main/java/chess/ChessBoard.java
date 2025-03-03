@@ -83,50 +83,50 @@ public class ChessBoard {
         squares = board;
     }
 
-    public void printBoard(){
-
-        System.out.println("PRINTING BOARD");
-
-        //rows
-        for(int i=0; i<8; i++) {
-            //columns
-            for (int j = 0; j < 8; j++) {
-                if(squares[i][j] == null){
-                    System.out.print("| ");
-                } else if(squares[i][j].getTeamColor() == ChessGame.TeamColor.WHITE){
-                    if (squares[i][j].getPieceType() == ChessPiece.PieceType.ROOK) {
-                        System.out.print("|R");
-                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.KNIGHT) {
-                        System.out.print("|N");
-                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.BISHOP) {
-                        System.out.print("|B");
-                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.QUEEN) {
-                        System.out.print("|Q");
-                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.KING) {
-                        System.out.print("|K");
-                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.PAWN) {
-                        System.out.print("|P");
-                    }
-                } else {
-                    if (squares[i][j].getPieceType() == ChessPiece.PieceType.ROOK) {
-                        System.out.print("|r");
-                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.KNIGHT) {
-                        System.out.print("|n");
-                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.BISHOP) {
-                        System.out.print("|b");
-                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.QUEEN) {
-                        System.out.print("|q");
-                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.KING) {
-                        System.out.print("|k");
-                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.PAWN) {
-                        System.out.print("|p");
-                    }
-                }
-
-            }
-            System.out.print("|\n");
-        }
-    }
+//    public void printBoard(){
+//
+//        System.out.println("PRINTING BOARD");
+//
+//        //rows
+//        for(int i=0; i<8; i++) {
+//            //columns
+//            for (int j = 0; j < 8; j++) {
+//                if(squares[i][j] == null){
+//                    System.out.print("| ");
+//                } else if(squares[i][j].getTeamColor() == ChessGame.TeamColor.WHITE){
+//                    if (squares[i][j].getPieceType() == ChessPiece.PieceType.ROOK) {
+//                        System.out.print("|R");
+//                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.KNIGHT) {
+//                        System.out.print("|N");
+//                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.BISHOP) {
+//                        System.out.print("|B");
+//                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.QUEEN) {
+//                        System.out.print("|Q");
+//                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.KING) {
+//                        System.out.print("|K");
+//                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.PAWN) {
+//                        System.out.print("|P");
+//                    }
+//                } else {
+//                    if (squares[i][j].getPieceType() == ChessPiece.PieceType.ROOK) {
+//                        System.out.print("|r");
+//                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.KNIGHT) {
+//                        System.out.print("|n");
+//                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.BISHOP) {
+//                        System.out.print("|b");
+//                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.QUEEN) {
+//                        System.out.print("|q");
+//                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.KING) {
+//                        System.out.print("|k");
+//                    } else if (squares[i][j].getPieceType() == ChessPiece.PieceType.PAWN) {
+//                        System.out.print("|p");
+//                    }
+//                }
+//
+//            }
+//            System.out.print("|\n");
+//        }
+//    }
 
     @Override
     public boolean equals(Object o) {

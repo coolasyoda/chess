@@ -47,14 +47,14 @@ public class ChessMove {
         return promotionPiece;
     }
 
-    public void printMove(){
-        System.out.print("MOVE: ");
-        System.out.print(startPosition.getRow());
-        System.out.print(startPosition.getColumn());
-        System.out.print(" to ");
-        System.out.print(endPosition.getRow());
-        System.out.println(endPosition.getColumn());
-    }
+//    public void printMove(){
+//        System.out.print("MOVE: ");
+//        System.out.print(startPosition.getRow());
+//        System.out.print(startPosition.getColumn());
+//        System.out.print(" to ");
+//        System.out.print(endPosition.getRow());
+//        System.out.println(endPosition.getColumn());
+//    }
 
     @Override
     public boolean equals(Object o) {
