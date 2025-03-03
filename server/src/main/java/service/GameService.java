@@ -4,6 +4,8 @@ import dataaccess.AuthDataAccess;
 import dataaccess.GameDataAccess;
 import model.GameData;
 
+import java.util.List;
+
 public class GameService {
 
     GameDataAccess gameDataAccess;
@@ -24,5 +26,9 @@ public class GameService {
 
     public GameData joinGame(Integer gameID, String username, String playerColor) {
         return gameDataAccess.joinGame(gameID, username, playerColor);
+    }
+
+    public List<GameData> listGames(){
+        return gameDataAccess.listGames();
     }
 }

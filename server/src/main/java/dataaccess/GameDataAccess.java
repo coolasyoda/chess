@@ -5,6 +5,7 @@ import model.GameData;
 import model.UserData;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,11 +22,16 @@ public class GameDataAccess {
 
     private final Map<Integer, GameData> gameDataMap = new HashMap<>();
     // Increments with each new game. NEVER DECREMENTS!
-    int numGames = 1;
+    int numGames;
+
+    public GameDataAccess(){
+        numGames = 1;
+    }
 
     public GameData newGame(GameData game) {
         GameData newGame = new GameData(numGames, null, null, game.gameName(), null);
         gameDataMap.put(numGames, newGame);
+        System.out.println("Creating Game: " + numGames);
         numGames++;
         return newGame;
     }
@@ -44,6 +50,7 @@ public class GameDataAccess {
             }
             else{
                 whiteUsername = username;
+                System.out.println("Adding \"" + username + "\" as white player to game: " + gameID);
             }
         }
 
@@ -53,6 +60,7 @@ public class GameDataAccess {
             }
             else{
                 blackUsername = username;
+                System.out.println("Adding \"" + username + "\" as black player to game: " + gameID);
             }
         }
 
@@ -66,9 +74,14 @@ public class GameDataAccess {
         return joinedGame;
     }
 
+    public List<GameData> listGames() {
+        return List.copyOf(gameDataMap.values());
+    }
 
     public void clear(){
+        numGames = 1;
         gameDataMap.clear();
     }
+
 
 }

@@ -9,6 +9,7 @@ import service.GameService;
 import spark.Request;
 import spark.Response;
 
+import java.util.List;
 import java.util.Map;
 
 public class GameHandler {
@@ -46,10 +47,23 @@ public class GameHandler {
         String authToken = request.headers("authorization");
 
         JsonObject gameRequest = gson.fromJson(request.body(), JsonObject.class);
+
+        if(!gameRequest.has("playerColor") || !gameRequest.has("gameID")){
+            response.status(400);
+            return gson.toJson(Map.of("message", "Error: bad request"));
+        }
+
+        System.out.println("Raw Request Body: " + request.body());
+
         String playerColor = gameRequest.get("playerColor").getAsString();
         int gameID = gameRequest.get("gameID").getAsInt();
 
         String username = gameService.validateUser(authToken);
+
+        if(!(playerColor.equals("WHITE") || playerColor.equals("BLACK"))){
+            response.status(400);
+            return gson.toJson(Map.of("message", "Error: bad request"));
+        }
 
         if(username == null){
             response.status(401);
@@ -67,15 +81,21 @@ public class GameHandler {
         return "";
     }
 
+    public Object listGames(Request request, Response response) {
+        String authToken = request.headers("authorization");
 
-    // LIST GAMES:
-    // games(ListRequest)
+        if(gameService.validateUser(authToken) == null){
+            response.status(401);
+            return gson.toJson(Map.of("message", "Error: unauthorized"));
+        }
 
-    // CREATE GAME:
-    // games(NewRequest)
+        List<GameData> games = gameService.listGames();
+        Map<String, List<GameData>> gamesList = Map.of("games", games);
 
-    // JOIN GAME:
-    // games(JoinRequest)
+        System.out.println(games.toString());
 
+        response.status(200);
+        return gson.toJson(gamesList);
+    }
 
 }
