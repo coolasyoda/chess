@@ -1,5 +1,6 @@
 package server;
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import spark.Request;
@@ -17,7 +18,7 @@ public class UserHandler {
         this.userService = userService;
     }
 
-    public Object register(Request request, Response response){
+    public Object register(Request request, Response response) throws DataAccessException {
         UserData userData = GSON.fromJson(request.body(), UserData.class);
 
         // Check if the username and password fields are filled
@@ -40,7 +41,7 @@ public class UserHandler {
         return GSON.toJson(authData);
     }
 
-    public Object login(Request request, Response response) {
+    public Object login(Request request, Response response) throws DataAccessException {
         UserData userData = GSON.fromJson(request.body(), UserData.class);
         System.out.println("Logging In User: " + userData.username());
 
