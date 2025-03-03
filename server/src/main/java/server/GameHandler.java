@@ -89,7 +89,7 @@ public class GameHandler {
             return GSON.toJson(Map.of("message", "Error: unauthorized"));
         }
 
-        List<GameData> games = gameService.listGames();
+        List<GameData> games = gameService.listGames(authToken);
         Map<String, List<GameData>> gamesList = Map.of("games", games);
 
         System.out.println(games.toString());

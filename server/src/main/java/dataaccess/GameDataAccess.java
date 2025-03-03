@@ -29,6 +29,9 @@ public class GameDataAccess {
     }
 
     public GameData newGame(GameData game) {
+        if(game.gameName() == null || game.gameName().isEmpty()){
+            return null;
+        }
         GameData newGame = new GameData(numGames, null, null, game.gameName(), null);
         gameDataMap.put(numGames, newGame);
         System.out.println("Creating Game: " + numGames);
@@ -37,6 +40,10 @@ public class GameDataAccess {
     }
 
     public GameData joinGame(Integer gameID, String username, String playerColor){
+        if(gameDataMap.get(gameID) == null){
+            return null;
+        }
+
         GameData joinGame = gameDataMap.get(gameID);
         String whiteUsername = joinGame.whiteUsername();
         String blackUsername = joinGame.blackUsername();

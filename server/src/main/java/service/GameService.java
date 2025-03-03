@@ -2,9 +2,11 @@ package service;
 
 import dataaccess.AuthDataAccess;
 import dataaccess.GameDataAccess;
+import model.AuthData;
 import model.GameData;
 
 import java.util.List;
+import java.util.Objects;
 
 public class GameService {
 
@@ -25,10 +27,16 @@ public class GameService {
     }
 
     public GameData joinGame(Integer gameID, String username, String playerColor) {
+        if(!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK") || username.isEmpty()){
+            return null;
+        }
         return gameDataAccess.joinGame(gameID, username, playerColor);
     }
 
-    public List<GameData> listGames(){
+    public List<GameData> listGames(String authToken){
+        if(validateUser(authToken) == null){
+            return null;
+        }
         return gameDataAccess.listGames();
     }
 }
