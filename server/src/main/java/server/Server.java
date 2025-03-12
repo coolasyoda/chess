@@ -1,8 +1,6 @@
 package server;
 
-import dataaccess.AuthDataAccess;
-import dataaccess.GameDataAccess;
-import dataaccess.UserDataAccess;
+import dataaccess.*;
 import service.GameService;
 import service.UserService;
 import spark.*;
@@ -12,9 +10,13 @@ public class Server {
     UserHandler userHandler;
     GameHandler gameHandler;
 
-    UserDataAccess userDataAccess = new UserDataAccess();
-    AuthDataAccess authDataAccess = new AuthDataAccess();
-    GameDataAccess gameDataAccess = new GameDataAccess();
+//    UserDataAccess userDataAccess = new UserDataAccess();
+//    AuthDataAccess authDataAccess = new AuthDataAccess();
+//    GameDataAccess gameDataAccess = new GameDataAccess();
+
+    UserDataAccess userDataAccess = new UserDataSQL();
+    AuthDataAccess authDataAccess = new AuthDataSQL();
+    GameDataAccess gameDataAccess = new GameDataSQL();
 
     public Server(){
         UserService userService = new UserService(userDataAccess, authDataAccess);
