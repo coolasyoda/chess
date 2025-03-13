@@ -26,13 +26,13 @@ public class GameDataSQL extends GameDataAccess{
             return null;
         }
 
-        String data = "INSERT INTO games (gameName, game) VALUES (?, ?, ?, ?)";
+        String data = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
 
         try (var conn = DatabaseManager.getConnection();
              var statement = conn.prepareStatement(data, Statement.RETURN_GENERATED_KEYS)) {
 
-            statement.setNull(1, java.sql.Types.VARCHAR);
-            statement.setNull(2, java.sql.Types.VARCHAR);
+            statement.setString(1, "");
+            statement.setString(2, "");
             statement.setString(3, game.gameName());
             statement.setString(4, game.chessGame().toString());
             statement.executeUpdate();
