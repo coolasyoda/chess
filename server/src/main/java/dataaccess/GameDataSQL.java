@@ -86,7 +86,7 @@ public class GameDataSQL extends GameDataAccess{
                         }
                     }
                     else{
-                        System.out.println("TEST");
+                        return null;
                     }
 
                     return new GameData(gameID, white, black, gameName, game);
