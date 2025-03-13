@@ -158,7 +158,10 @@ public class ServiceTests {
         UserData userData2 = new UserData("testUser2", "testPassword", "");
         userService.registerUser(userData2);
 
-        GameData gameData1 = new GameData(null, null, null, "testGame1", null);
+        ChessGame game1 = new ChessGame();
+
+
+        GameData gameData1 = new GameData(null, null, null, "testGame1", game1);
         GameData createdGame1 = gameService.createGame(gameData1);
 
         testList.add(createdGame1);
@@ -170,7 +173,9 @@ public class ServiceTests {
         gameData1 = gameService.joinGame(createdGame1.gameID(), "testUser1", "WHITE");
         gameData1 = gameService.joinGame(createdGame1.gameID(), "testUser2", "BLACK");
         testList.clear();
-        GameData testData = new GameData(1, "testUser1", "testUser2", "testGame1", null);
+        ChessGame game2 = new ChessGame();
+
+        GameData testData = new GameData(1, "testUser1", "testUser2", "testGame1", game2);
         testList.add(testData);
 
         //Test with joined users
@@ -178,7 +183,7 @@ public class ServiceTests {
         Assertions.assertEquals(testList, gamesList, "Games should have joined users");
 
 
-        GameData gameData2 = new GameData(null, null, null, "testGame2", null);
+        GameData gameData2 = new GameData(null, null, null, "testGame2", game2);
         GameData createdGame2 = gameService.createGame(gameData2);
 
         testList.add(createdGame2);

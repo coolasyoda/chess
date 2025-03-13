@@ -6,10 +6,7 @@ import model.GameData;
 
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class GameDataSQL extends GameDataAccess{
 
@@ -41,7 +38,7 @@ public class GameDataSQL extends GameDataAccess{
             try (var generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int gameID = generatedKeys.getInt(1);
-                    GameData newGame = new GameData(gameID, null, null, game.gameName(), null);
+                    GameData newGame = new GameData(gameID, null, null, game.gameName(), game.chessGame());
                     System.out.println("Creating Game: " + gameID);
                     return newGame;
                 }
@@ -99,8 +96,40 @@ public class GameDataSQL extends GameDataAccess{
         }
     }
 
-    public List<GameData> listGames() {
-        return null;
+    public List<GameData> listGames() throws DataAccessException {
+        List<GameData> games = new ArrayList<>();
+
+        try (var conn = DatabaseManager.getConnection()) {
+            String query = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games";
+            try(var results = conn.prepareStatement(query)){
+
+                try (var rs = results.executeQuery()) {
+
+                    while (rs.next()){
+                        int gameID = rs.getInt("gameID");
+                        String white = rs.getString("whiteUsername");
+                        String black = rs.getString("blackUsername");
+                        String gameName = rs.getString("gameName");
+
+                        ChessGame game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
+
+                        if(Objects.equals(white, "")){
+                            white = null;
+                        }
+                        if(Objects.equals(black, "")){
+                            black = null;
+                        }
+
+                        games.add(new GameData(gameID, white, black, gameName, game));
+                    }
+                }
+            }
+        }
+        catch (SQLException | DataAccessException e){
+            throw new DataAccessException("Error listing games: " + e);
+        }
+
+        return games;
     }
 
     public void clear(){

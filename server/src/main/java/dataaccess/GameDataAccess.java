@@ -81,7 +81,7 @@ public class GameDataAccess {
         return joinedGame;
     }
 
-    public List<GameData> listGames() {
+    public List<GameData> listGames() throws DataAccessException {
         return List.copyOf(gameDataMap.values());
     }
 
