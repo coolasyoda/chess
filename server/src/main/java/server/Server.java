@@ -10,17 +10,28 @@ public class Server {
     UserHandler userHandler;
     GameHandler gameHandler;
 
-//    UserDataAccess userDataAccess = new UserDataAccess();
-//    AuthDataAccess authDataAccess = new AuthDataAccess();
-//    GameDataAccess gameDataAccess = new GameDataAccess();
+    boolean useSQL = true;
 
-    UserDataAccess userDataAccess = new UserDataSQL();
-    AuthDataAccess authDataAccess = new AuthDataSQL();
-    GameDataAccess gameDataAccess = new GameDataSQL();
+    UserDataAccess userDataAccess = new UserDataAccess();
+    AuthDataAccess authDataAccess = new AuthDataAccess();
+    GameDataAccess gameDataAccess = new GameDataAccess();
+
+    UserDataAccess userDataAccessSQL = new UserDataSQL();
+    AuthDataAccess authDataAccessSQL = new AuthDataSQL();
+    GameDataAccess gameDataAccessSQL = new GameDataSQL();
 
     public Server(){
-        UserService userService = new UserService(userDataAccess, authDataAccess);
-        GameService gameService = new GameService(gameDataAccess, authDataAccess);
+        UserService userService;
+        GameService gameService;
+
+        if(useSQL){
+            userService = new UserService(userDataAccessSQL, authDataAccessSQL);
+            gameService = new GameService(gameDataAccessSQL, authDataAccessSQL);
+        }
+        else{
+            userService = new UserService(userDataAccess, authDataAccess);
+            gameService = new GameService(gameDataAccess, authDataAccess);
+        }
 
         userHandler = new UserHandler(userService);
         gameHandler = new GameHandler(gameService);

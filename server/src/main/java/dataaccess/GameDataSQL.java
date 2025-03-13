@@ -66,21 +66,21 @@ public class GameDataSQL extends GameDataAccess{
 
                     if(Objects.equals(playerColor, "WHITE") && white.isEmpty()){
                         String update = "UPDATE games SET whiteUsername=? WHERE gameID=?";
-                        try (var ps = conn.prepareStatement(update)) {
-                            ps.setString(1, username);
-                            ps.setInt(2, gameID);
-                            ps.executeUpdate();
-                            white = username;
-                        }
+                        var ps = conn.prepareStatement(update);
+                        ps.setString(1, username);
+                        ps.setInt(2, gameID);
+                        ps.executeUpdate();
+                        white = username;
+
                     }
                     else if(Objects.equals(playerColor, "BLACK") && black.isEmpty()){
                         String update = "UPDATE games SET blackUsername=? WHERE gameID=?";
-                        try (var ps = conn.prepareStatement(update)) {
+                        var ps = conn.prepareStatement(update);
                             ps.setString(1, username);
                             ps.setInt(2, gameID);
                             ps.executeUpdate();
                             black = username;
-                        }
+
                     }
                     else{
                         return null;
@@ -158,6 +158,7 @@ public class GameDataSQL extends GameDataAccess{
               INDEX(`gameName`)
             )"""
     };
+
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
