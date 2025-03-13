@@ -110,7 +110,8 @@ public class ServiceTests {
 
     @Test
     public void posTestCreateGame() throws DataAccessException {
-        GameData gameData = new GameData(null, null, null, "testGame", null);
+        ChessGame game = new ChessGame();
+        GameData gameData = new GameData(null, null, null, "testGame", game);
         GameData createdGame = gameService.createGame(gameData);
         Assertions.assertNotNull(createdGame, "Should return game data");
         Assertions.assertNotNull(createdGame.gameID(), "Should have gameID");

@@ -34,7 +34,7 @@ public class GameDataSQL extends GameDataAccess{
             statement.setString(1, "");
             statement.setString(2, "");
             statement.setString(3, game.gameName());
-            statement.setString(4, game.chessGame().toString());
+            statement.setString(4, game.chessGame().getBoard().toString());
             statement.executeUpdate();
 
             try (var generatedKeys = statement.getGeneratedKeys()) {
