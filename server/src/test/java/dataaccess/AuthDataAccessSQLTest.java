@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-public class authDataAccessSQLTest {
+public class AuthDataAccessSQLTest {
 
     AuthDataSQL authDataAccess;
 
@@ -53,6 +53,7 @@ public class authDataAccessSQLTest {
                 "No user exists");
 
         AuthData authData = new AuthData(UUID.randomUUID().toString(), "testUser");
+        authDataAccess.addAuthData(authData);
 
         Assertions.assertNull(authDataAccess.validAuthToken(UUID.randomUUID().toString()),
                 "Should not validate authToken when false");
@@ -61,7 +62,7 @@ public class authDataAccessSQLTest {
                 "AuthToken is null");
     }
 
-//    addAuthData
+//    addAuthData -> currently returns null NEED TO ADD
 
 
 

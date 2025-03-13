@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class userDataAccessSQLTest {
+public class UserDataAccessSQLTest {
 
     UserDataAccess userDataAccess;
     UserData userData = new UserData("testUser", "testPassword", "");
@@ -20,10 +20,13 @@ public class userDataAccessSQLTest {
     @Test
     public void posCreateUser() throws DataAccessException {
         userDataAccess.createUser(userData);
+        //currently returns null -> NEED TO ADD
+
     }
 
     @Test
     public void negCreateUser(){
+        //currently returns null -> NEED TO ADD
 
     }
 
@@ -47,12 +50,12 @@ public class userDataAccessSQLTest {
 
     @Test
     public void posVerifyUser() throws DataAccessException {
-
+        //currently returns null -> NEED TO ADD
     }
 
     @Test
     public void negVerifyUser(){
-
+        //currently returns null -> NEED TO ADD
     }
 
     @Test
