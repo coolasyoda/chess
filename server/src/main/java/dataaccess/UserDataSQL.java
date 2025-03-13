@@ -16,16 +16,19 @@ public class UserDataSQL extends UserDataAccess {
     }
 
     public UserData findUser(String username) throws DataAccessException {
-        System.out.println("FIND USER\n");
 
         try (var conn = DatabaseManager.getConnection()) {
+
             var statement = "SELECT username, password, email FROM users WHERE username=?";
             try (var ps = conn.prepareStatement(statement)) {
+
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
+
                     if (rs.next()) {
                         var password = rs.getString("password");
                         var email = rs.getString("email");
+                        System.out.println("FOUND USER: " + username);
                         return new UserData(username, password, email);
                     }
                 }
@@ -53,13 +56,11 @@ public class UserDataSQL extends UserDataAccess {
             throw new DataAccessException("Error: " + e.getMessage());
         }
 
-
-
     }
 
     public void clear(){
         System.out.println("USER CLEAR\n");
-        
+
         try (var conn = DatabaseManager.getConnection()) {
             try (var statement = conn.prepareStatement("TRUNCATE users ")) {
                 statement.executeUpdate();

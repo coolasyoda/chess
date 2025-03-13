@@ -44,7 +44,7 @@ public class GameHandler {
         return GSON.toJson(game);
     }
 
-    public Object joinGame(Request request, Response response) {
+    public Object joinGame(Request request, Response response) throws DataAccessException {
         String authToken = request.headers("authorization");
 
         JsonObject gameRequest = GSON.fromJson(request.body(), JsonObject.class);
@@ -82,7 +82,7 @@ public class GameHandler {
         return "";
     }
 
-    public Object listGames(Request request, Response response) {
+    public Object listGames(Request request, Response response) throws DataAccessException {
         String authToken = request.headers("authorization");
 
         if(gameService.validateUser(authToken) == null){

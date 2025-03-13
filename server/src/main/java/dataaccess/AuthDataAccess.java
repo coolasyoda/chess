@@ -15,7 +15,7 @@ public class AuthDataAccess {
 
     }
 
-    public void addAuthData(AuthData authData){
+    public void addAuthData(AuthData authData) throws DataAccessException {
         userDataMap.put(authData.authToken(), authData.username());
     }
 
@@ -28,7 +28,7 @@ public class AuthDataAccess {
     }
 
     //returns the username
-    public String validAuthToken(String authToken){
+    public String validAuthToken(String authToken) throws DataAccessException {
         return userDataMap.get(authToken);
     }
 

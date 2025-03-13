@@ -23,7 +23,7 @@ public class GameService {
         return gameDataAccess.newGame(game);
     }
 
-    public String validateUser(String authToken){
+    public String validateUser(String authToken) throws DataAccessException {
         return authDataAccess.validAuthToken(authToken);
     }
 
@@ -34,7 +34,7 @@ public class GameService {
         return gameDataAccess.joinGame(gameID, username, playerColor);
     }
 
-    public List<GameData> listGames(String authToken){
+    public List<GameData> listGames(String authToken) throws DataAccessException {
         System.out.println("TEST 2");
         if(validateUser(authToken) == null){
             return null;

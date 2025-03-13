@@ -25,7 +25,7 @@ public class ServiceTests {
     GameDataAccess gameDataAccess;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws DataAccessException {
 //        userDataAccess = new UserDataAccess();
 //        authDataAccess = new AuthDataAccess();
 //        gameDataAccess = new GameDataAccess();
@@ -36,6 +36,11 @@ public class ServiceTests {
 
         userService = new UserService(userDataAccess, authDataAccess);
         gameService = new GameService(gameDataAccess, authDataAccess);
+
+        userDataAccess.clear();
+        gameDataAccess.clear();
+        authDataAccess.clear();
+
 
     }
 
@@ -184,7 +189,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void negListGamesTest(){
+    public void negListGamesTest() throws DataAccessException {
         String badToken = UUID.randomUUID().toString();
 
         Assertions.assertNull(gameService.listGames(badToken));

@@ -5,12 +5,16 @@ import dataaccess.DataAccessException;
 import dataaccess.UserDataAccess;
 import model.AuthData;
 import model.UserData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     UserDataAccess userDataAccess;
     AuthDataAccess authDataAccess;
 
@@ -58,9 +62,9 @@ public class UserService {
     }
 
 
-    private AuthData generateAuthData(UserData userData){
+    private AuthData generateAuthData(UserData userData) throws DataAccessException {
         String authToken = UUID.randomUUID().toString();
-        AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());
+        AuthData authData = new AuthData(authToken, userData.username());
         authDataAccess.addAuthData(authData);
         System.out.println("Added authToken " + authToken + " to " + userData.username());
         return authData;
