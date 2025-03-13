@@ -57,7 +57,7 @@ public class Server {
         return Spark.port();
     }
 
-    public Object clear(Request request, Response response){
+    public Object clear(Request request, Response response) throws DataAccessException {
         System.out.println("Clear Called");
         userDataAccess.clear();
         authDataAccess.clear();

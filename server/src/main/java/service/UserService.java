@@ -42,7 +42,7 @@ public class UserService {
 
     }
 
-    public AuthData loginUser(UserData userData){
+    public AuthData loginUser(UserData userData) throws DataAccessException {
 
         UserData potentialLogin = userDataAccess.findUser(userData.username());
         // Check if the passwords are the same

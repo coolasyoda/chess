@@ -1,9 +1,7 @@
 package service;
 
-import dataaccess.AuthDataAccess;
-import dataaccess.DataAccessException;
-import dataaccess.GameDataAccess;
-import dataaccess.UserDataAccess;
+import chess.ChessGame;
+import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 import model.GameData;
@@ -28,9 +26,13 @@ public class ServiceTests {
 
     @BeforeEach
     public void setup() {
-        userDataAccess = new UserDataAccess();
-        authDataAccess = new AuthDataAccess();
-        gameDataAccess = new GameDataAccess();
+//        userDataAccess = new UserDataAccess();
+//        authDataAccess = new AuthDataAccess();
+//        gameDataAccess = new GameDataAccess();
+
+        userDataAccess = new UserDataSQL();
+        authDataAccess = new AuthDataSQL();
+        gameDataAccess = new GameDataSQL();
 
         userService = new UserService(userDataAccess, authDataAccess);
         gameService = new GameService(gameDataAccess, authDataAccess);
@@ -102,7 +104,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void posTestCreateGame(){
+    public void posTestCreateGame() throws DataAccessException {
         GameData gameData = new GameData(null, null, null, "testGame", null);
         GameData createdGame = gameService.createGame(gameData);
         Assertions.assertNotNull(createdGame, "Should return game data");
@@ -110,7 +112,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void negTestCreateGame(){
+    public void negTestCreateGame() throws DataAccessException {
         GameData gameData1 = new GameData(null, null, null, null, null);
         GameData gameData2 = new GameData(null, null, null, "", null);
         Assertions.assertNull(gameService.createGame(gameData1), "Should return null on null gameName");
@@ -213,7 +215,9 @@ public class ServiceTests {
         UserData userData2 = new UserData("testUser2", "testPassword", "");
         userService.registerUser(userData2);
 
-        GameData gameData = new GameData(null, null, null, "testGame", null);
+        ChessGame game = new ChessGame();
+
+        GameData gameData = new GameData(null, null, null, "testGame", game);
         GameData createdGame = gameService.createGame(gameData);
 
         gameData = gameService.joinGame(createdGame.gameID(), "testUser1", "WHITE");

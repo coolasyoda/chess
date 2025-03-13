@@ -28,7 +28,7 @@ public class GameDataAccess {
         numGames = 1;
     }
 
-    public GameData newGame(GameData game) {
+    public GameData newGame(GameData game) throws DataAccessException {
         if(game.gameName() == null || game.gameName().isEmpty()){
             return null;
         }

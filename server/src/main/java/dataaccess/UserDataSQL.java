@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.UserData;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDataSQL extends UserDataAccess {
@@ -14,25 +15,67 @@ public class UserDataSQL extends UserDataAccess {
         }
     }
 
-    public UserData findUser(String username){
+    public UserData findUser(String username) throws DataAccessException {
+        System.out.println("FIND USER\n");
+
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username, password, email FROM users WHERE username=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        var password = rs.getString("password");
+                        var email = rs.getString("email");
+                        return new UserData(username, password, email);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Error finding user: " + e);
+        }
         return null;
     }
 
-    public void createUser(UserData user){
+    public void createUser(UserData user) throws DataAccessException {
+        System.out.println("CREATE USER\n");
+
+        String data = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+
+        try (var conn = DatabaseManager.getConnection();
+             var statement = conn.prepareStatement(data)) {
+
+            statement.setString(1, user.email());
+            statement.setString(2, user.password());
+            statement.setString(3, user.email());
+            statement.executeUpdate();
+
+        } catch (SQLException | DataAccessException e) {
+            throw new DataAccessException("Error: " + e.getMessage());
+        }
+
+
 
     }
 
     public void clear(){
-
+        System.out.println("USER CLEAR\n");
+        
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var statement = conn.prepareStatement("TRUNCATE users ")) {
+                statement.executeUpdate();
+            }
+        } catch (SQLException | DataAccessException e) {
+           return;
+        }
     }
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  user (
+            CREATE TABLE IF NOT EXISTS  users (
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256),
-              PRIMARY KEY (`username`),
+              PRIMARY KEY (`username`)
             )"""
     };
 
@@ -49,5 +92,7 @@ public class UserDataSQL extends UserDataAccess {
             throw new RuntimeException(ex);
         }
     }
+
+
 
 }

@@ -14,20 +14,20 @@ public class UserDataAccess {
 
     }
 
-    public UserData findUser(String username){
+    public UserData findUser(String username) throws DataAccessException {
         if(userDataMap.containsKey(username)){
             return userDataMap.get(username);
         }
         return null;
     }
 
-    public void createUser(UserData user){
+    public void createUser(UserData user) throws DataAccessException {
         if(findUser(user.username()) == null){
             userDataMap.put(user.username(), user);
         }
     }
 
-    public void clear(){
+    public void clear() throws DataAccessException {
         userDataMap.clear();
     }
 
