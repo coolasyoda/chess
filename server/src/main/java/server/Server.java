@@ -12,23 +12,28 @@ public class Server {
 
     boolean useSQL = true;
 
-    UserDataAccess userDataAccess = new UserDataAccess();
-    AuthDataAccess authDataAccess = new AuthDataAccess();
-    GameDataAccess gameDataAccess = new GameDataAccess();
+    UserDataAccess userDataAccess;
+    AuthDataAccess authDataAccess;
+    GameDataAccess gameDataAccess;
 
-    UserDataAccess userDataAccessSQL = new UserDataSQL();
-    AuthDataAccess authDataAccessSQL = new AuthDataSQL();
-    GameDataAccess gameDataAccessSQL = new GameDataSQL();
 
     public Server(){
         UserService userService;
         GameService gameService;
 
         if(useSQL){
-            userService = new UserService(userDataAccessSQL, authDataAccessSQL);
-            gameService = new GameService(gameDataAccessSQL, authDataAccessSQL);
+            userDataAccess = new UserDataSQL();
+            authDataAccess = new AuthDataSQL();
+            gameDataAccess = new GameDataSQL();
+
+            userService = new UserService(userDataAccess, authDataAccess);
+            gameService = new GameService(gameDataAccess, authDataAccess);
         }
         else{
+            userDataAccess = new UserDataAccess();
+            authDataAccess = new AuthDataAccess();
+            gameDataAccess = new GameDataAccess();
+
             userService = new UserService(userDataAccess, authDataAccess);
             gameService = new GameService(gameDataAccess, authDataAccess);
         }

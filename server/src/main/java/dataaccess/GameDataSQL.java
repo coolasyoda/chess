@@ -76,10 +76,10 @@ public class GameDataSQL extends GameDataAccess{
                     else if(Objects.equals(playerColor, "BLACK") && black.isEmpty()){
                         String update = "UPDATE games SET blackUsername=? WHERE gameID=?";
                         var ps = conn.prepareStatement(update);
-                            ps.setString(1, username);
-                            ps.setInt(2, gameID);
-                            ps.executeUpdate();
-                            black = username;
+                        ps.setString(1, username);
+                        ps.setInt(2, gameID);
+                        ps.executeUpdate();
+                        black = username;
 
                     }
                     else{
