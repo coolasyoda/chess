@@ -63,7 +63,7 @@ public class UserHandler {
         return  GSON.toJson(authData);
     }
 
-    public Object logout(Request request, Response response){
+    public Object logout(Request request, Response response) throws DataAccessException {
         String authToken = request.headers("authorization");
 
         if(userService.logoutUser(authToken)){

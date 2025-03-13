@@ -19,7 +19,7 @@ public class AuthDataAccess {
         userDataMap.put(authData.authToken(), authData.username());
     }
 
-    public boolean removeAuthData(String authToken){
+    public boolean removeAuthData(String authToken) throws DataAccessException {
         if(userDataMap.get(authToken) != null){
             userDataMap.remove(authToken);
             return true;

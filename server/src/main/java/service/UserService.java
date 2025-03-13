@@ -57,7 +57,7 @@ public class UserService {
         return null;
     }
 
-    public boolean logoutUser(String authToken){
+    public boolean logoutUser(String authToken) throws DataAccessException {
         return authDataAccess.removeAuthData(authToken);
     }
 

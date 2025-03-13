@@ -35,7 +35,11 @@ public class AuthDataSQL extends AuthDataAccess {
 
     }
 
-    public boolean removeAuthData(String authToken){
+    public boolean removeAuthData(String authToken) throws DataAccessException {
+        if(validAuthToken(authToken) == null){
+            return false;
+        }
+
         String query = "DELETE FROM auth WHERE authToken = ?";
 
         try (var conn = DatabaseManager.getConnection();
