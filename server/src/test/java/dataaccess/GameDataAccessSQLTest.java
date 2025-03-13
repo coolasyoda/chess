@@ -39,17 +39,42 @@ public class GameDataAccessSQLTest {
 
         GameData gameData = new GameData(null, null, null, null, null);
         newGame = gameDataAccess.newGame(gameData);
-        Assertions.assertNull(newGame, "Game needs name and chessGame");
+        Assertions.assertNull(newGame, "Game needs name");
 
     }
 
     @Test
-    public void posJoinGame() {
+    public void posJoinGame() throws DataAccessException {
+        ChessGame game = new ChessGame();
+        GameData gameData = new GameData(null, null, null, "testGame", game);
+        GameData newGame = gameDataAccess.newGame(gameData);
+
+        GameData gameTest = new GameData(null, "user1", "user2", "testGame", game);
+
+        gameDataAccess.joinGame(newGame.gameID(), "user1", "WHITE");
+        newGame = gameDataAccess.joinGame(newGame.gameID(), "user2", "BLACK");
+
+        Assertions.assertEquals(gameTest, newGame, "Users should be added");
 
     }
 
     @Test
-    public void negJoinGame() {
+    public void negJoinGame() throws DataAccessException {
+        ChessGame game = new ChessGame();
+        GameData gameData = new GameData(null, null, null, "testGame", game);
+        GameData newGame = gameDataAccess.newGame(gameData);
+        int gameID = newGame.gameID();
+
+        GameData gameTest = new GameData(null, "user1", "user2", "testGame", game);
+
+        newGame = gameDataAccess.joinGame(gameID, "user1", "GREEN");
+
+        Assertions.assertNull(newGame, "Must be WHITE or BLACK");
+
+        gameDataAccess.joinGame(gameID, "user1", "WHITE");
+        newGame = gameDataAccess.joinGame(gameID, "user2", "WHITE");
+
+        Assertions.assertNull(newGame, "Player position already occupied");
 
     }
 

@@ -20,7 +20,7 @@ public class GameDataSQL extends GameDataAccess{
 
     public GameData newGame(GameData game) throws DataAccessException {
         System.out.println("NEW GAME\n");
-        if(game == null || game.gameName() == null || game.gameName().isEmpty() || game.chessGame() == null){
+        if(game == null || game.gameName() == null || game.gameName().isEmpty()){
             return null;
         }
 
