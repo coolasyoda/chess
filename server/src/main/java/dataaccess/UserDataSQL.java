@@ -16,6 +16,7 @@ public class UserDataSQL extends UserDataAccess {
     }
 
     public UserData findUser(String username) throws DataAccessException {
+        System.out.println("Searching for user: " + username);
 
         try (var conn = DatabaseManager.getConnection()) {
 
@@ -40,14 +41,14 @@ public class UserDataSQL extends UserDataAccess {
     }
 
     public void createUser(UserData user) throws DataAccessException {
-        System.out.println("CREATE USER\n");
+        System.out.println("CREATE USER " + user + "\n");
 
         String data = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
 
         try (var conn = DatabaseManager.getConnection();
              var statement = conn.prepareStatement(data)) {
 
-            statement.setString(1, user.email());
+            statement.setString(1, user.username());
             statement.setString(2, user.password());
             statement.setString(3, user.email());
             statement.executeUpdate();
