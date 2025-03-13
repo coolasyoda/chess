@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UserService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     UserDataAccess userDataAccess;
     AuthDataAccess authDataAccess;
 

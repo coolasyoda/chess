@@ -101,10 +101,8 @@ public class GameDataSQL extends GameDataAccess{
 
         try (var conn = DatabaseManager.getConnection()) {
             String query = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games";
-            try(var results = conn.prepareStatement(query)){
-
-                try (var rs = results.executeQuery()) {
-
+            try(var results = conn.prepareStatement(query);
+                var rs = results.executeQuery()) {
                     while (rs.next()){
                         int gameID = rs.getInt("gameID");
                         String white = rs.getString("whiteUsername");
@@ -122,7 +120,6 @@ public class GameDataSQL extends GameDataAccess{
 
                         games.add(new GameData(gameID, white, black, gameName, game));
                     }
-                }
             }
         }
         catch (SQLException | DataAccessException e){
