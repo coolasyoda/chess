@@ -50,7 +50,7 @@ public class UserService {
 
         UserData potentialLogin = userDataAccess.findUser(userData.username());
         // Check if the passwords are the same
-        if(potentialLogin != null && Objects.equals(potentialLogin.password(), userData.password())){
+        if(potentialLogin != null && userDataAccess.verifyUser(userData.username(), userData.password())){
             return generateAuthData(userData);
         }
 

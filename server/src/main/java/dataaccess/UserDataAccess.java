@@ -5,6 +5,7 @@ import model.UserData;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map;
+import java.util.Objects;
 
 public class UserDataAccess {
 
@@ -29,6 +30,10 @@ public class UserDataAccess {
 
     public void clear() throws DataAccessException {
         userDataMap.clear();
+    }
+
+    public boolean verifyUser(String username, String providedClearTextPassword){
+        return Objects.equals(userDataMap.get(username).password(), providedClearTextPassword);
     }
 
 

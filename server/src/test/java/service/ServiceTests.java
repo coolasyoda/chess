@@ -60,7 +60,8 @@ public class ServiceTests {
     public void posTestGetUser() throws DataAccessException {
         UserData userData = new UserData("testUser", "testPassword", "");
         userService.registerUser(userData);
-        Assertions.assertEquals(userData, userService.getUser("testUser"),"Did not retrieve user");
+        //ONLY CHECK FOR username! Passwords are encrypted
+        Assertions.assertEquals(userData.username(), userService.getUser("testUser").username(),"Did not retrieve user");
     }
 
     @Test

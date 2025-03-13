@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,7 +50,7 @@ public class UserDataSQL extends UserDataAccess {
              var statement = conn.prepareStatement(data)) {
 
             statement.setString(1, user.username());
-            statement.setString(2, user.password());
+            statement.setString(2, BCrypt.hashpw(user.password(), BCrypt.gensalt()));
             statement.setString(3, user.email());
             statement.executeUpdate();
 
@@ -57,6 +58,16 @@ public class UserDataSQL extends UserDataAccess {
             throw new DataAccessException("Error: " + e.getMessage());
         }
 
+    }
+
+    public boolean verifyUser(String username, String providedClearTextPassword) {
+        // read the previously hashed password from the database
+        try {
+            var hashedPassword = findUser(username).password();
+            return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
+        } catch (DataAccessException e) {
+            return false;
+        }
     }
 
     public void clear(){
