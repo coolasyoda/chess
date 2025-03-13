@@ -98,9 +98,9 @@ public class AuthDataSQL extends AuthDataAccess {
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
+        try (var connection = DatabaseManager.getConnection()) {
             for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
+                try (var preparedStatement = connection.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
             }

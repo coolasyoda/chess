@@ -26,13 +26,18 @@ public class ServiceTests {
 
     @BeforeEach
     public void setup() throws DataAccessException {
-//        userDataAccess = new UserDataAccess();
-//        authDataAccess = new AuthDataAccess();
-//        gameDataAccess = new GameDataAccess();
+        boolean useSQL = true;
+        if(useSQL){
+            userDataAccess = new UserDataSQL();
+            authDataAccess = new AuthDataSQL();
+            gameDataAccess = new GameDataSQL();
+        }
+        else{
+            userDataAccess = new UserDataAccess();
+            authDataAccess = new AuthDataAccess();
+            gameDataAccess = new GameDataAccess();
+        }
 
-        userDataAccess = new UserDataSQL();
-        authDataAccess = new AuthDataSQL();
-        gameDataAccess = new GameDataSQL();
 
         userService = new UserService(userDataAccess, authDataAccess);
         gameService = new GameService(gameDataAccess, authDataAccess);
