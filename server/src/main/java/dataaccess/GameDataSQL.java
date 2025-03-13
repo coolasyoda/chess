@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.GameData;
 
 import java.sql.SQLException;
@@ -34,7 +35,7 @@ public class GameDataSQL extends GameDataAccess{
             statement.setString(1, "");
             statement.setString(2, "");
             statement.setString(3, game.gameName());
-            statement.setString(4, game.chessGame().getBoard().toString());
+            statement.setString(4, new Gson().toJson(game));
             statement.executeUpdate();
 
             try (var generatedKeys = statement.getGeneratedKeys()) {
@@ -54,31 +55,48 @@ public class GameDataSQL extends GameDataAccess{
 
     public GameData joinGame(Integer gameID, String username, String playerColor){
         try (var conn = DatabaseManager.getConnection()) {
-            String statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, game=?, WHERE gameID";
-            try (var ps = conn.prepareStatement(statement)) {
-                String query = "SELECT whiteUsername, blackUsername WHERE gameID=?";
-                var results = conn.prepareStatement(query);
-                results.setInt(5, gameID);
-                var rs = results.executeQuery();
+            String query = "SELECT whiteUsername, blackUsername, gameName, game FROM games WHERE gameID=?";
+            try(var results = conn.prepareStatement(query)){
+                results.setInt(1, gameID);
+                try (var rs = results.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new DataAccessException("gameID not found");
+                    }
+                    var white = rs.getString("whiteUsername");
+                    var black = rs.getString("blackUsername");
+                    var gameName = rs.getString("gameName");
+                    var game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
 
+                    if(Objects.equals(playerColor, "WHITE") && white.isEmpty()){
+                        String update = "UPDATE games SET whiteUsername=? WHERE gameID=?";
+                        try (var ps = conn.prepareStatement(update)) {
+                            ps.setString(1, username);
+                            ps.setInt(2, gameID);
+                            ps.executeUpdate();
+                            white = username;
+                        }
+                    }
+                    else if(Objects.equals(playerColor, "BLACK") && black.isEmpty()){
+                        String update = "UPDATE games SET blackUsername=? WHERE gameID=?";
+                        try (var ps = conn.prepareStatement(update)) {
+                            ps.setString(1, username);
+                            ps.setInt(2, gameID);
+                            ps.executeUpdate();
+                            black = username;
+                        }
+                    }
+                    else{
+                        System.out.println("TEST");
+                    }
 
-                if(Objects.equals(playerColor, "WHITE") && rs.getString("whiteUsername") == null){
-                    ps.setString(1, username);
-                }
-                else if(rs.getString("blackUsername") == null){
-                    ps.setString(2, username);
-                }
-                ps.setInt(5, gameID);
-                if(!(ps.executeUpdate()==0)){
-                    throw new DataAccessException("gameID not found");
+                    return new GameData(gameID, white, black, gameName, game);
                 }
 
             }
+
         } catch (SQLException | DataAccessException e) {
             return null;
         }
-
-        return null;
     }
 
     public List<GameData> listGames() {
@@ -104,7 +122,7 @@ public class GameDataSQL extends GameDataAccess{
               `whiteUsername` VARCHAR(256),
               `blackUsername` VARCHAR(256),
               `gameName` VARCHAR(256) NOT NULL,
-              `game` TEXT,
+              `game` TEXT NOT NULL,
               PRIMARY KEY (`gameID`),
               INDEX(`whiteUsername`),
               INDEX(`blackUsername`),

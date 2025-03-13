@@ -204,13 +204,15 @@ public class ServiceTests {
         UserData userData2 = new UserData("testUser2", "testPassword", "");
         userService.registerUser(userData2);
 
-        GameData gameData = new GameData(null, null, null, "testGame", null);
+        ChessGame game = new ChessGame();
+
+        GameData gameData = new GameData(null, null, null, "testGame", game);
         GameData createdGame = gameService.createGame(gameData);
 
         gameData = gameService.joinGame(createdGame.gameID(), "testUser1", "WHITE");
         gameData = gameService.joinGame(createdGame.gameID(), "testUser2", "BLACK");
 
-        GameData testData = new GameData(1, "testUser1", "testUser2", "testGame", null);
+        GameData testData = new GameData(1, "testUser1", "testUser2", "testGame", game);
         Assertions.assertEquals(testData, gameData, "EXPECTED VALUES: White=testUser1 Black=testUser2");
     }
 
