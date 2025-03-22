@@ -83,10 +83,5 @@ public class GameDataAccessSQLTest {
 
     }
 
-    @Test
-    public void negListGames() {
-
-    }
-
 
 }
