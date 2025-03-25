@@ -23,7 +23,7 @@ public class PrintBoard {
 
     public void printBoard(){
 
-        System.out.println(game.getBoard().toString());
+        System.out.println(game.getBoard().toString(false));
 
     }
 

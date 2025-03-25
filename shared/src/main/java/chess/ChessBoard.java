@@ -83,12 +83,15 @@ public class ChessBoard {
         squares = board;
     }
 
-    public String toString(){
+    public String toString(boolean white){
 
         StringBuilder boardString = new StringBuilder();
 
-        for(int i=7; i>=0; i--){
-            for(int j=7; j>=0; j--){
+        int start = white ? 7 : 0;
+        int step = white ? -1 : 1;
+
+        for(int i=start; white ? i>=0: i<8; i+=step){
+            for(int j=start; white ? j>=0: j<8; j+=step){
                 if(squares[i][j] == null){
                     boardString.append(" ");
                 }
