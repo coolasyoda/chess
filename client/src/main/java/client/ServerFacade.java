@@ -1,5 +1,8 @@
 package client;
 
+import chess.ChessGame;
+import ui.ChessBoard;
+
 import java.util.Objects;
 
 public class ServerFacade {
@@ -24,12 +27,14 @@ public class ServerFacade {
     }
 
     public boolean login(String username, String password){
+        ChessGame game = new ChessGame();
+        ChessBoard board = new ChessBoard(game);
+
 
         return false;
     }
 
     public boolean logout(){
-
         return false;
     }
 
@@ -37,7 +42,7 @@ public class ServerFacade {
         return false;
     }
 
-    public boolean join(){
+    public boolean join(String ID, String color){
         return false;
     }
 
@@ -45,10 +50,8 @@ public class ServerFacade {
         return false;
     }
 
-    public boolean observe(){
+    public boolean observe(String ID){
         return false;
     }
-
-
 
 }

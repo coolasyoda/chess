@@ -24,7 +24,8 @@ public class ChessClient {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            if(state == State.POSTLOGIN){
+            if(state == State.GAMEPLAY){
+                System.out.println("GAMEPLAY: ");
                 return switch (cmd) {
                     case "create" -> create(params);
                     case "join" -> join(params);
@@ -35,13 +36,16 @@ public class ChessClient {
                     default -> help();
                 };
             }
-            return switch (cmd) {
-                case "register" -> register(params);
-                case "login" -> login(params);
-                case "quit" -> -1;
-                default -> help();
-            };
+            else{
+                System.out.println("PRE-LOGIN: ");
 
+                return switch (cmd) {
+                    case "register" -> register(params);
+                    case "login" -> login(params);
+                    case "quit" -> -1;
+                    default -> help();
+                };
+            }
     }
 
     public int register(String... params){
@@ -82,13 +86,15 @@ public class ChessClient {
     }
 
     public int logout(){
+        System.out.println("LOGOUT");
+
         return server.logout() ? 1 : 0;
     }
 
     public int create(String... params){
-
+        System.out.println("CREATE");
         if(params.length == 1){
-            if(server.create(params[0])){
+            if(!server.create(params[0])){
                 System.out.println("Error Creating Game");
                 return 0;
             }
@@ -98,10 +104,13 @@ public class ChessClient {
     }
 
     public int join(String... params){
+        System.out.println("JOIN");
+
         if(params.length == 2){
-
+            if(!server.join(params[0], params[1])){
+                System.out.println("Failed to join game");
+            }
         }
-
 
         return 0;
     }
@@ -111,8 +120,12 @@ public class ChessClient {
     }
 
     public int observe(String... params){
-        if(params.length == 1){
+        System.out.println("OBSERVE");
 
+        if(params.length == 1){
+            if(!server.observe(params[0])){
+                System.out.println("Failed to observe game");
+            }
         }
 
         return 0;
