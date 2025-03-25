@@ -1,6 +1,5 @@
 import chess.*;
-import client.ServerFacade;
-import ui.PreloginREPL;
+import ui.REPL;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,6 +7,6 @@ public class Main {
         System.out.println("♕ 240 Chess Client: " + piece);
 
         var serverURL = "http://localhost:8080";
-        new PreloginREPL(serverURL).run();
+        new REPL(serverURL).run();
     }
 }
