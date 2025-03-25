@@ -1,7 +1,7 @@
 package client;
 
 import chess.ChessGame;
-import ui.ChessBoard;
+import ui.PrintBoard;
 
 import java.util.Objects;
 
@@ -28,7 +28,7 @@ public class ServerFacade {
 
     public boolean login(String username, String password){
         ChessGame game = new ChessGame();
-        ChessBoard board = new ChessBoard(game);
+        PrintBoard board = new PrintBoard(game);
 
 
         return false;
