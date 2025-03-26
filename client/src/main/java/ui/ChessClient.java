@@ -2,14 +2,13 @@ package ui;
 
 import client.ServerFacade;
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
-import java.sql.SQLOutput;
 import java.util.Arrays;
 
 public class ChessClient {
 
     private final ServerFacade server;
     private final String serverURL;
+
 
     private State state = State.PRELOGIN;
 
@@ -54,7 +53,9 @@ public class ChessClient {
             String password = params[1];
             String email = (params.length == 3) ? params[2] : null;
 
-            if(!server.register(username, password, email)){
+//            authToken = register(username, password, email);
+
+            if(!server.registerFacade(username, password, email)){
                 System.out.println("Register Failed");
                 return 0;
             }
@@ -74,7 +75,7 @@ public class ChessClient {
             String username = params[0];
             String password = params[1];
 
-            if(!server.login(username, password)){
+            if(!server.loginFacade(username, password)){
                 System.out.println("Login Failed");
                 return 0;
             }
@@ -88,13 +89,13 @@ public class ChessClient {
     public int logout(){
         System.out.println("LOGOUT");
 
-        return server.logout() ? 1 : 0;
+        return server.logoutFacade() ? 1 : 0;
     }
 
     public int create(String... params){
         System.out.println("CREATE");
         if(params.length == 1){
-            if(!server.create(params[0])){
+            if(!server.createFacade(params[0])){
                 System.out.println("Error Creating Game");
                 return 0;
             }
@@ -107,7 +108,7 @@ public class ChessClient {
         System.out.println("JOIN");
 
         if(params.length == 2){
-            if(!server.join(params[0], params[1])){
+            if(!server.joinFacade(params[0], params[1])){
                 System.out.println("Failed to join game");
             }
         }
@@ -123,7 +124,7 @@ public class ChessClient {
         System.out.println("OBSERVE");
 
         if(params.length == 1){
-            if(!server.observe(params[0])){
+            if(!server.observeFacade(params[0])){
                 System.out.println("Failed to observe game");
             }
         }
