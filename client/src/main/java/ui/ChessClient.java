@@ -77,7 +77,7 @@ public class ChessClient {
                 return 0;
             }
             state = State.POSTLOGIN;
-
+            help();
             return 1;
         }
 
@@ -89,7 +89,7 @@ public class ChessClient {
         if(logoutVal){
             System.out.println("LOGOUT SUCCESSFUL");
             state = State.PRELOGIN;
-
+            help();
         }
         else {
             System.out.println("LOGOUT FAILED");
