@@ -87,15 +87,15 @@ public class ChessBoard {
 
         StringBuilder boardString = new StringBuilder();
 
-        int i_start = white ? 7 : 0;
-        int j_start = white ? 0 : 7;
+        int iStart = white ? 7 : 0;
+        int jStart = white ? 0 : 7;
 
-        int i_step = white ? -1 : 1;
-        int j_step = white ? 1 : -1;
+        int iStep = white ? -1 : 1;
+        int jStep = white ? 1 : -1;
 
 
-        for(int i=i_start; white ? i>=0: i<8; i+=i_step){
-            for(int j=j_start; white ? j<8 : j>=0; j+=j_step){
+        for(int i=iStart; white ? i>=0: i<8; i+=iStep){
+            for(int j=jStart; white ? j<8 : j>=0; j+=jStep){
                 if(squares[i][j] == null){
                     boardString.append(" ");
                 }
