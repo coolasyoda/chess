@@ -134,12 +134,7 @@ public class ServerFacade {
                 String blackUsername = (String) game.get("blackUsername");
                 String gameName = (String) game.get("gameName");
 
-                if(Objects.equals(whiteUsername, userUsername)){
-                    joinedGames.put(gameID, true);
-                }
-                else if(Objects.equals(blackUsername, userUsername)){
-                    joinedGames.put(gameID, false);
-                }
+                joinedGames.put(gameID, true);
 
                 System.out.println("Game ID: " + gameID + ", Name: " + gameName);
                 System.out.println("White Username: " + (whiteUsername != null ? whiteUsername : "AVAILABLE"));
@@ -157,15 +152,19 @@ public class ServerFacade {
 
     public boolean observeFacade(String gameID){
 
-        var player = joinedGames.get(Integer.parseInt(gameID));
+        var maxGames = joinedGames.size();
 
-        if(player == null){
+        if(maxGames == 0 || Integer.parseInt(gameID) >= maxGames + 1){
+            return false;
+        }
+
+        if(Integer.parseInt(gameID) == 0){
             return false;
         }
 
         ChessGame game = new ChessGame();
         PrintBoard board = new PrintBoard(game);
-        board.printBoard(player);
+        board.printBoard(true);
 
         return true;
     }
