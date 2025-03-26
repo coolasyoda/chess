@@ -8,6 +8,7 @@ import ui.ResponseException;
 import java.io.*;
 import java.net.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -93,7 +94,29 @@ public class ServerFacade {
     }
 
     public boolean listFacade(){
-        return false;
+        var path = "/game";
+        try {
+            Map response = this.makeRequest("GET", path, null, Map.class);
+            List<Map<String, Object>> games = (List<Map<String, Object>>) response.get("games");
+
+            for (Map<String, Object> game : games) {
+                Integer gameID = ((Number) game.get("gameID")).intValue();
+                String whiteUsername = (String) game.get("whiteUsername");
+                String blackUsername = (String) game.get("blackUsername");
+                String gameName = (String) game.get("gameName");
+
+                System.out.println("Game ID: " + gameID + ", Name: " + gameName);
+                System.out.println("White Username: " + (whiteUsername != null ? whiteUsername : "AVAILABLE"));
+                System.out.println("Black Username: " + (blackUsername != null ? blackUsername : "AVAILABLE"));
+                System.out.println();
+            }
+
+            return true;
+        }
+        catch (ResponseException responseException){
+            System.out.println("ERROR LISTING GAMES");
+            return false;
+        }
     }
 
     public boolean observeFacade(String ID){

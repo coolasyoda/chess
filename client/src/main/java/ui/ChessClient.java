@@ -23,7 +23,7 @@ public class ChessClient {
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-        if(state == State.GAMEPLAY){
+        if(state == State.POSTLOGIN){
             return switch (cmd) {
                 case "create" -> create(params);
                 case "join" -> join(params);
@@ -58,7 +58,7 @@ public class ChessClient {
             }
 
             System.out.println("Successfully Registered:");
-            state = State.GAMEPLAY;
+            state = State.POSTLOGIN;
             help();
             return 1;
         }
@@ -76,7 +76,7 @@ public class ChessClient {
                 System.out.println("Login Failed");
                 return 0;
             }
-            state = State.GAMEPLAY;
+            state = State.POSTLOGIN;
 
             return 1;
         }
@@ -125,6 +125,8 @@ public class ChessClient {
     }
 
     public int list(){
+        server.listFacade();
+
         return 0;
     }
 
