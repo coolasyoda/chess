@@ -139,7 +139,7 @@ public class ServerFacade {
         }
     }
 
-    public boolean observeFacade(String ID){
+    public boolean observeFacade(String gameID){
         ChessGame game = new ChessGame();
         System.out.println("WHITE BOARD:");
         PrintBoard board = new PrintBoard(game);
