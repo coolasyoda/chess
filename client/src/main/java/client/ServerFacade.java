@@ -71,7 +71,7 @@ public class ServerFacade {
         }
     }
 
-    public boolean createFacade(String gameName){
+    public int createFacade(String gameName){
         Map<String, String> request = new HashMap<>();
         request.put("gameName", gameName);
 
@@ -81,11 +81,11 @@ public class ServerFacade {
             // DO NOT UNDO WEIRD CASTING!
             Integer gameID = ((Number) response.get("gameID")).intValue();
             System.out.println("Created " + gameName + " with ID: " + gameID);
-            return true;
+            return gameID;
         }
         catch (ResponseException responseException){
             System.out.println("ERROR CREATING GAME");
-            return false;
+            return 0;
         }
     }
 

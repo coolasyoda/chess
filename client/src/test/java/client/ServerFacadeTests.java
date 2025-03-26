@@ -4,6 +4,8 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ChessClient;
 
+import java.util.UUID;
+
 
 public class ServerFacadeTests {
 
@@ -16,6 +18,8 @@ public class ServerFacadeTests {
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
         client = new ChessClient("http://localhost:" + port);
+        client.register("username", "password", null);
+        client.logout();
     }
 
     @AfterAll
@@ -26,7 +30,8 @@ public class ServerFacadeTests {
 
     @Test
     public void posRegister() {
-        Assertions.assertEquals(1, client.register("username", "password", null));
+        String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        Assertions.assertEquals(1, client.register(randomString, "password", null));
     }
 
     @Test
@@ -38,23 +43,20 @@ public class ServerFacadeTests {
 
     @Test
     public void posLogin() {
-        client.register("testUser", "password", null);
+        Assertions.assertEquals(1, client.login("username", "password"));
         client.logout();
-        Assertions.assertEquals(1, client.login("testUser", "password"));
     }
 
     @Test
     public void negLogin() {
         Assertions.assertEquals(0, client.login("noUser", "password"));
-        client.register("testUser", "password", null);
-        Assertions.assertEquals(0, client.login("noUser", "badPassword"));
+        Assertions.assertEquals(0, client.login("username", "badPassword"));
     }
 
     @Test
     public void posLogout() {
-        client.register("testLogout", "password", null);
+        client.login("username", "password");
         Assertions.assertEquals(1, client.logout());
-
     }
 
     @Test
@@ -64,34 +66,48 @@ public class ServerFacadeTests {
 
     @Test
     public void posCreate() {
-        client.register("testCreate", "password", null);
-        Assertions.assertEquals(1, client.create("GAME"));
+        client.login("username", "password");
+        Assertions.assertNotEquals(0, client.create("GAME"));
+        client.logout();
     }
 
     @Test
     public void negCreate() {
-        Assertions.assertTrue(true);
+        client.login("username", "password");
+        client.create("GAME test");
+        Assertions.assertEquals(0, client.create("test", "test"));
+        client.logout();
     }
 
     @Test
     public void posJoin() {
-        Assertions.assertTrue(true);
+        client.login("username", "password");
+        int gameID = client.create("GAME test");
+        Assertions.assertEquals(1, client.join(String.valueOf(gameID), "white"));
+        Assertions.assertEquals(1, client.join(String.valueOf(gameID), "black"));
+        client.logout();
     }
 
     @Test
     public void negJoin() {
-        Assertions.assertTrue(true);
+        client.login("username", "password");
+        int gameID = client.create("GAME test");
+        Assertions.assertEquals(0, client.join(String.valueOf(gameID), "GREEN"));
+        Assertions.assertEquals(0, client.join(String.valueOf(gameID + 1), "black"));
+        client.logout();
     }
 
     @Test
     public void posList() {
-        Assertions.assertTrue(true);
+        client.login("username", "password");
+        int gameID = client.create("GAME test");
+        Assertions.assertEquals(1, client.list());
+        client.logout();
     }
 
     @Test
     public void negList() {
-        Assertions.assertTrue(true);
+        Assertions.assertEquals(0, client.list());
     }
-
 
 }

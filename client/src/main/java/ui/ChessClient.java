@@ -100,11 +100,12 @@ public class ChessClient {
 
     public int create(String... params){
         if(params.length == 1){
-            if(!server.createFacade(params[0])){
+            int gameID = server.createFacade(params[0]);
+            if(gameID == 0){
                 System.out.println("Error Creating Game");
                 return 0;
             }
-            return 1;
+            return gameID;
         }
 
         System.out.println("Please enter valid game name");
@@ -117,6 +118,7 @@ public class ChessClient {
         if(params.length == 2){
             if(!server.joinFacade(Integer.parseInt(params[0]), params[1])){
                 System.out.println("Failed to join game");
+                return 0;
             }
             return 1;
         }
@@ -126,9 +128,7 @@ public class ChessClient {
     }
 
     public int list(){
-        server.listFacade();
-
-        return 0;
+        return server.listFacade() ? 1 : 0;
     }
 
     public int observe(String... params){
