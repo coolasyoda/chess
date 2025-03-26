@@ -28,7 +28,7 @@ public class ChessClient {
                 case "create" -> create(params);
                 case "join" -> join(params);
                 case "list" -> list();
-                case "observe" -> observe();
+                case "observe" -> observe(params);
                 case "logout" -> logout();
                 case "quit" -> quit();
                 default -> help();
@@ -49,8 +49,6 @@ public class ChessClient {
             String username = params[0];
             String password = params[1];
             String email = (params.length == 3) ? params[2] : null;
-
-//            authToken = register(username, password, email);
 
             if(!server.registerFacade(username, password, email)){
                 System.out.println("Register Failed");
@@ -80,6 +78,8 @@ public class ChessClient {
             help();
             return 1;
         }
+
+        System.out.println("Please enter valid login");
 
         return 0;
     }
@@ -116,6 +116,13 @@ public class ChessClient {
     public int join(String... params){
 
         if(params.length == 2){
+            for (int i = 0; i < params[0].length(); i++) {
+                if (!Character.isDigit(params[0].charAt(i))) {
+                    System.out.println("Please enter valid input");
+                    return 0;
+                }
+            }
+
             if(!server.joinFacade(Integer.parseInt(params[0]), params[1])){
                 System.out.println("Failed to join game");
                 return 0;
@@ -132,8 +139,23 @@ public class ChessClient {
     }
 
     public int observe(String... params){
-        server.observeFacade("params[0]");
 
+        if(params.length == 1){
+            for (int i = 0; i < params[0].length(); i++) {
+                if (!Character.isDigit(params[0].charAt(i))) {
+                    System.out.println("Please enter valid input");
+                    return 0;
+                }
+            }
+
+            if(!server.observeFacade(params[0])){
+                System.out.println("Failed to observe game");
+                return 0;
+            }
+            return 1;
+        }
+
+        System.out.println("Please enter valid input or list games and try again");
         return 0;
     }
 

@@ -16,6 +16,9 @@ public class ServerFacade {
 
     private final String serverURL;
     private String authToken = null;
+    private String userUsername = null;
+    Map<Integer, Boolean> joinedGames = new HashMap<>();
+
 
     public ServerFacade(String url){
         serverURL = url;
@@ -31,7 +34,7 @@ public class ServerFacade {
         try {
             Map response = this.makeRequest("POST", path, request, Map.class);
             authToken = (String) response.get("authToken");
-            username = (String) response.get("username");
+            userUsername = (String) response.get("username");
             return true;
         }
         catch (ResponseException responseException){
@@ -48,7 +51,7 @@ public class ServerFacade {
         var path = "/session";
         try {
             Map response = this.makeRequest("POST", path, request, Map.class);
-            username = (String) response.get("username");
+            userUsername = (String) response.get("username");
             authToken = (String) response.get("authToken");
             System.out.println("SUCCESSFULLY LOGGED IN");
             return true;
@@ -90,7 +93,6 @@ public class ServerFacade {
     }
 
     public boolean joinFacade(Number gameID, String color){
-
         boolean playerType = false;
 
         Map<String, Object> request = new HashMap<>();
@@ -124,11 +126,20 @@ public class ServerFacade {
             Map response = this.makeRequest("GET", path, null, Map.class);
             List<Map<String, Object>> games = (List<Map<String, Object>>) response.get("games");
 
+            joinedGames.clear();
+
             for (Map<String, Object> game : games) {
-                Integer gameID = ((Number) game.get("gameID")).intValue();
+                int gameID = ((Number) game.get("gameID")).intValue();
                 String whiteUsername = (String) game.get("whiteUsername");
                 String blackUsername = (String) game.get("blackUsername");
                 String gameName = (String) game.get("gameName");
+
+                if(Objects.equals(whiteUsername, userUsername)){
+                    joinedGames.put(gameID, true);
+                }
+                else if(Objects.equals(blackUsername, userUsername)){
+                    joinedGames.put(gameID, false);
+                }
 
                 System.out.println("Game ID: " + gameID + ", Name: " + gameName);
                 System.out.println("White Username: " + (whiteUsername != null ? whiteUsername : "AVAILABLE"));
@@ -145,14 +156,18 @@ public class ServerFacade {
     }
 
     public boolean observeFacade(String gameID){
-        ChessGame game = new ChessGame();
-        System.out.println("WHITE BOARD:");
-        PrintBoard board = new PrintBoard(game);
-        board.printBoard(true);
-        System.out.println("BLACK BOARD:");
-        board.printBoard(false);
 
-        return false;
+        var player = joinedGames.get(Integer.parseInt(gameID));
+
+        if(player == null){
+            return false;
+        }
+
+        ChessGame game = new ChessGame();
+        PrintBoard board = new PrintBoard(game);
+        board.printBoard(player);
+
+        return true;
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
