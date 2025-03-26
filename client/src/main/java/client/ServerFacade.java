@@ -31,6 +31,7 @@ public class ServerFacade {
         try {
             Map response = this.makeRequest("POST", path, request, Map.class);
             authToken = (String) response.get("authToken");
+            username = (String) response.get("username");
             return true;
         }
         catch (ResponseException responseException){
@@ -47,7 +48,7 @@ public class ServerFacade {
         var path = "/session";
         try {
             Map response = this.makeRequest("POST", path, request, Map.class);
-
+            username = (String) response.get("username");
             authToken = (String) response.get("authToken");
             System.out.println("SUCCESSFULLY LOGGED IN");
             return true;
@@ -88,9 +89,28 @@ public class ServerFacade {
         }
     }
 
-    public boolean joinFacade(String ID, String color){
+    public boolean joinFacade(Number gameID, String color){
 
-        return false;
+        Map<String, Object> request = new HashMap<>();
+        if(Objects.equals(color, "white")){
+            request.put("playerColor", "WHITE");
+        }
+        else if (Objects.equals(color, "black")) {
+            request.put("playerColor", "BLACK");
+        }
+
+        request.put("gameID", gameID);
+
+        var path = "/game";
+        try {
+            makeRequest("PUT", path, request, null);
+
+            return true;
+        }
+        catch (ResponseException responseException){
+            System.out.println("Error joining game");
+            return false;
+        }
     }
 
     public boolean listFacade(){
@@ -140,6 +160,8 @@ public class ServerFacade {
                 http.setRequestProperty("authorization", authToken);
             }
 
+            System.out.println("Request body: " + request);
+
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -147,7 +169,6 @@ public class ServerFacade {
         } catch (ResponseException ex) {
             throw ex;
         } catch (Exception ex) {
-            System.out.println("TEST");
             throw new ResponseException(500, ex.getMessage());
         }
     }

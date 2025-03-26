@@ -116,9 +116,10 @@ public class ChessClient {
         System.out.println("JOIN");
 
         if(params.length == 2){
-            if(!server.joinFacade(params[0], params[1])){
+            if(!server.joinFacade(Integer.parseInt(params[0]), params[1])){
                 System.out.println("Failed to join game");
             }
+            return 1;
         }
 
         return 0;
