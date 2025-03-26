@@ -130,63 +130,6 @@ public class GameDataSQL extends GameDataAccess{
     }
 
 
-//    public GameData getGame(int gameID) throws DataAccessException {
-//        try (var conn = DatabaseManager.getConnection()) {
-//            String query = "SELECT whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID=?";
-//            try (var statement = conn.prepareStatement(query)) {
-//                statement.setInt(1, gameID);
-//                try (var rs = statement.executeQuery()) {
-//                    if (!rs.next()) {
-//                        throw new DataAccessException("game not found");
-//                    }
-//
-//                    var white = rs.getString("whiteUsername");
-//                    var black = rs.getString("blackUsername");
-//                    var gameName = rs.getString("gameName");
-//                    var game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
-//
-//                    return new GameData(gameID, white, black, gameName, game);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            throw new DataAccessException("Error fetching game");
-//        }
-//    }
-//
-//    // Updates g
-//    public GameData makeMove(int gameID, ChessGame chessGame){
-//        try (var conn = DatabaseManager.getConnection()) {
-//            String query = "SELECT game FROM games WHERE gameID=?";
-//            try(var results = conn.prepareStatement(query)){
-//                results.setInt(1, gameID);
-//                try (var rs = results.executeQuery()) {
-//                    if (!rs.next()) {
-//                        throw new DataAccessException("game not found");
-//                    }
-//
-//                    var white = rs.getString("whiteUsername");
-//                    var black = rs.getString("blackUsername");
-//                    var gameName = rs.getString("gameName");
-//                    var game = new Gson().fromJson(chessGame.toString(), ChessGame.class);
-//
-//
-//                    String update = "UPDATE games SET game=? WHERE gameID=?";
-//                    var ps = conn.prepareStatement(update);
-//                    ps.setInt(1, gameID);
-//                    ps.executeUpdate();
-//
-//                    return new GameData(gameID, white, black, gameName, game);
-//                }
-//
-//            }
-//
-//        } catch (SQLException | DataAccessException e) {
-//            return null;
-//        }
-//
-//    }
-
-
 
     public void clear(){
         System.out.println("GAME CLEAR\n");
