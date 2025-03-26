@@ -20,31 +20,28 @@ public class ChessClient {
     }
 
     public int eval(String input) {
-            var tokens = input.toLowerCase().split(" ");
-            var cmd = (tokens.length > 0) ? tokens[0] : "help";
-            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            if(state == State.GAMEPLAY){
-                System.out.println("GAMEPLAY: ");
-                return switch (cmd) {
-                    case "create" -> create(params);
-                    case "join" -> join(params);
-                    case "list" -> list();
-                    case "observe" -> observe();
-                    case "logout" -> logout();
-                    case "quit" -> -1;
-                    default -> help();
-                };
-            }
-            else{
-                System.out.println("PRE-LOGIN: ");
-
-                return switch (cmd) {
-                    case "register" -> register(params);
-                    case "login" -> login(params);
-                    case "quit" -> -1;
-                    default -> help();
-                };
-            }
+        var tokens = input.toLowerCase().split(" ");
+        var cmd = (tokens.length > 0) ? tokens[0] : "help";
+        var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        if(state == State.GAMEPLAY){
+            return switch (cmd) {
+                case "create" -> create(params);
+                case "join" -> join(params);
+                case "list" -> list();
+                case "observe" -> observe();
+                case "logout" -> logout();
+                case "quit" -> -1;
+                default -> help();
+            };
+        }
+        else{
+            return switch (cmd) {
+                case "register" -> register(params);
+                case "login" -> login(params);
+                case "quit" -> -1;
+                default -> help();
+            };
+        }
     }
 
     public int register(String... params){
@@ -87,9 +84,15 @@ public class ChessClient {
     }
 
     public int logout(){
-        System.out.println("LOGOUT");
+        boolean logoutVal = server.logoutFacade();
+        if(logoutVal){
+            System.out.println("LOGOUT SUCCESSFUL");
+        }
+        else {
+            System.out.println("LOGOUT FAILED");
+        }
 
-        return server.logoutFacade() ? 1 : 0;
+        return logoutVal ? 1 : 0;
     }
 
     public int create(String... params){
@@ -147,6 +150,7 @@ public class ChessClient {
                 - list - list existing games
                 - join <ID> [WHITE | BLACK] - join an existing game
                 - observe <ID> - observe a game
+                - logout
                 - help
                 - quit
                 """);

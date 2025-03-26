@@ -14,7 +14,7 @@ import java.util.Objects;
 public class ServerFacade {
 
     private final String serverURL;
-    private String authToken;
+    private String authToken = null;
 
     public ServerFacade(String url){
         serverURL = url;
@@ -31,28 +31,36 @@ public class ServerFacade {
         try {
             Map response = this.makeRequest("POST", path, request, Map.class);
             authToken = (String) response.get("authToken");
-            System.out.println("AUTHTOKEN = " + authToken);
             return true;
         }
         catch (ResponseException responseException){
-            System.out.println(responseException);
+            System.out.println("Username is already taken");
             return false;
         }
     }
 
     public boolean loginFacade(String username, String password){
-        ChessGame game = new ChessGame();
-        PrintBoard board = new PrintBoard(game);
+
 
 
         return false;
     }
 
     public boolean logoutFacade(){
-        return false;
+        var path = "/session";
+        try {
+            Map response = this.makeRequest("DELETE", path, null, null);
+
+            return true;
+        }
+        catch (ResponseException responseException){
+            return false;
+        }
     }
 
     public boolean createFacade(String gameName){
+        ChessGame game = new ChessGame();
+        PrintBoard board = new PrintBoard(game);
         return false;
     }
 
@@ -75,6 +83,10 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
+            if (authToken != null) {
+                http.setRequestProperty("authorization", authToken);
+            }
+
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -82,7 +94,6 @@ public class ServerFacade {
         } catch (ResponseException ex) {
             throw ex;
         } catch (Exception ex) {
-            System.out.println("THROWN");
             throw new ResponseException(500, ex.getMessage());
         }
     }
