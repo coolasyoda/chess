@@ -9,7 +9,6 @@ public class PrintBoard {
 
     public PrintBoard(ChessGame game){
         this.game = game;
-        printBoard(false);
     }
 
 

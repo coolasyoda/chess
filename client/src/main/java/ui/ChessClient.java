@@ -30,7 +30,7 @@ public class ChessClient {
                 case "list" -> list();
                 case "observe" -> observe();
                 case "logout" -> logout();
-                case "quit" -> -1;
+                case "quit" -> quit();
                 default -> help();
             };
         }
@@ -76,6 +76,7 @@ public class ChessClient {
                 System.out.println("Login Failed");
                 return 0;
             }
+            state = State.GAMEPLAY;
 
             return 1;
         }
@@ -87,6 +88,8 @@ public class ChessClient {
         boolean logoutVal = server.logoutFacade();
         if(logoutVal){
             System.out.println("LOGOUT SUCCESSFUL");
+            state = State.PRELOGIN;
+
         }
         else {
             System.out.println("LOGOUT FAILED");
@@ -96,13 +99,15 @@ public class ChessClient {
     }
 
     public int create(String... params){
-        System.out.println("CREATE");
         if(params.length == 1){
             if(!server.createFacade(params[0])){
                 System.out.println("Error Creating Game");
                 return 0;
             }
+            return 1;
         }
+
+        System.out.println("Please enter valid game name");
 
         return 0;
     }
@@ -133,6 +138,11 @@ public class ChessClient {
         }
 
         return 0;
+    }
+
+    public int quit(){
+        logout();
+        return -1;
     }
 
     public int help(){

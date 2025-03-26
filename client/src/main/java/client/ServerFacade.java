@@ -21,7 +21,6 @@ public class ServerFacade {
     }
 
     public boolean registerFacade(String username, String password, String email) {
-        System.out.println("REGISTER FACADE");
         Map<String, String> request = new HashMap<>();
         request.put("username", username);
         request.put("password", password);
@@ -40,17 +39,29 @@ public class ServerFacade {
     }
 
     public boolean loginFacade(String username, String password){
+        Map<String, String> request = new HashMap<>();
+        request.put("username", username);
+        request.put("password", password);
 
+        var path = "/session";
+        try {
+            Map response = this.makeRequest("POST", path, request, Map.class);
 
-
-        return false;
+            authToken = (String) response.get("authToken");
+            System.out.println("SUCCESSFULLY LOGGED IN");
+            return true;
+        }
+        catch (ResponseException responseException){
+            System.out.println("Incorrect password or username");
+            return false;
+        }
     }
 
     public boolean logoutFacade(){
         var path = "/session";
         try {
             Map response = this.makeRequest("DELETE", path, null, null);
-
+            authToken = null;
             return true;
         }
         catch (ResponseException responseException){
@@ -59,12 +70,25 @@ public class ServerFacade {
     }
 
     public boolean createFacade(String gameName){
-        ChessGame game = new ChessGame();
-        PrintBoard board = new PrintBoard(game);
-        return false;
+        Map<String, String> request = new HashMap<>();
+        request.put("gameName", gameName);
+
+        var path = "/game";
+        try {
+            Map response = this.makeRequest("POST", path, request, Map.class);
+            // DO NOT UNDO WEIRD CASTING!
+            Integer gameID = ((Number) response.get("gameID")).intValue();
+            System.out.println("Created " + gameName + " with ID: " + gameID);
+            return true;
+        }
+        catch (ResponseException responseException){
+            System.out.println("ERROR CREATING GAME");
+            return false;
+        }
     }
 
     public boolean joinFacade(String ID, String color){
+
         return false;
     }
 
@@ -73,6 +97,12 @@ public class ServerFacade {
     }
 
     public boolean observeFacade(String ID){
+        ChessGame game = new ChessGame();
+        PrintBoard board = new PrintBoard(game);
+        board.printBoard(true);
+        System.out.println();
+        board.printBoard(false);
+
         return false;
     }
 
@@ -94,6 +124,7 @@ public class ServerFacade {
         } catch (ResponseException ex) {
             throw ex;
         } catch (Exception ex) {
+            System.out.println("TEST");
             throw new ResponseException(500, ex.getMessage());
         }
     }
