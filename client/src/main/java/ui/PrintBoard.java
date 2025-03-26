@@ -107,6 +107,7 @@ public class PrintBoard {
             boardString.append(EMPTY + " H  G   F   E  D   C  B   A    ");
         }
         boardString.append(RESET_BG_COLOR);
+        boardString.append(RESET_TEXT_COLOR);
         boardString.append("\n");
         System.out.println(boardString);
     }

@@ -132,13 +132,7 @@ public class ChessClient {
     }
 
     public int observe(String... params){
-        System.out.println("OBSERVE");
         server.observeFacade("params[0]");
-//        if(params.length == 1){
-//            if(!server.observeFacade(params[0])){
-//                System.out.println("Failed to observe game");
-//            }
-//        }
 
         return 0;
     }
