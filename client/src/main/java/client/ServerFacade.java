@@ -141,9 +141,10 @@ public class ServerFacade {
 
     public boolean observeFacade(String ID){
         ChessGame game = new ChessGame();
+        System.out.println("WHITE BOARD:");
         PrintBoard board = new PrintBoard(game);
         board.printBoard(true);
-        System.out.println();
+        System.out.println("BLACK BOARD:");
         board.printBoard(false);
 
         return false;
@@ -159,8 +160,6 @@ public class ServerFacade {
             if (authToken != null) {
                 http.setRequestProperty("authorization", authToken);
             }
-
-            System.out.println("Request body: " + request);
 
             writeBody(request, http);
             http.connect();
