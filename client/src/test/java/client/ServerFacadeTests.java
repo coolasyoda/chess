@@ -64,7 +64,8 @@ public class ServerFacadeTests {
 
     @Test
     public void posCreate() {
-        Assertions.assertTrue(true);
+        client.register("testCreate", "password", null);
+        Assertions.assertEquals(1, client.create("GAME"));
     }
 
     @Test

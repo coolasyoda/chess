@@ -113,7 +113,6 @@ public class ChessClient {
     }
 
     public int join(String... params){
-        System.out.println("JOIN");
 
         if(params.length == 2){
             if(!server.joinFacade(Integer.parseInt(params[0]), params[1])){
@@ -122,6 +121,7 @@ public class ChessClient {
             return 1;
         }
 
+        System.out.println("Please enter valid input");
         return 0;
     }
 

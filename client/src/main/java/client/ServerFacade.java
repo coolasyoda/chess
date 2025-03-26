@@ -91,9 +91,12 @@ public class ServerFacade {
 
     public boolean joinFacade(Number gameID, String color){
 
+        boolean playerType = false;
+
         Map<String, Object> request = new HashMap<>();
         if(Objects.equals(color, "white")){
             request.put("playerColor", "WHITE");
+            playerType = true;
         }
         else if (Objects.equals(color, "black")) {
             request.put("playerColor", "BLACK");
@@ -104,11 +107,13 @@ public class ServerFacade {
         var path = "/game";
         try {
             makeRequest("PUT", path, request, null);
-
+            System.out.println("Joined Game "+ gameID);
+            ChessGame game = new ChessGame();
+            PrintBoard board = new PrintBoard(game);
+            board.printBoard(playerType);
             return true;
         }
         catch (ResponseException responseException){
-            System.out.println("Error joining game");
             return false;
         }
     }
