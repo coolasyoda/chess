@@ -18,7 +18,7 @@ public class ServerFacade {
     private String authToken = null;
     private String userUsername = null;
     Map<Integer, Boolean> joinedGames = new HashMap<>();
-
+    List<Map<String, Object>> games;
 
     public ServerFacade(String url){
         serverURL = url;
@@ -104,7 +104,9 @@ public class ServerFacade {
             request.put("playerColor", "BLACK");
         }
 
-        request.put("gameID", gameID);
+        var realGameID = games.get(((Integer) gameID)-1).get("gameID");
+
+        request.put("gameID", realGameID);
 
         var path = "/game";
         try {
@@ -124,22 +126,26 @@ public class ServerFacade {
         var path = "/game";
         try {
             Map response = this.makeRequest("GET", path, null, Map.class);
-            List<Map<String, Object>> games = (List<Map<String, Object>>) response.get("games");
+            games = (List<Map<String, Object>>) response.get("games");
 
             joinedGames.clear();
 
+            int gameID = 1;
+
             for (Map<String, Object> game : games) {
-                int gameID = ((Number) game.get("gameID")).intValue();
+
+                int readGameID = ((Number) game.get("gameID")).intValue();
                 String whiteUsername = (String) game.get("whiteUsername");
                 String blackUsername = (String) game.get("blackUsername");
                 String gameName = (String) game.get("gameName");
 
-                joinedGames.put(gameID, true);
+                joinedGames.put(readGameID, true);
 
                 System.out.println("Game ID: " + gameID + ", Name: " + gameName);
                 System.out.println("White Username: " + (whiteUsername != null ? whiteUsername : "AVAILABLE"));
                 System.out.println("Black Username: " + (blackUsername != null ? blackUsername : "AVAILABLE"));
                 System.out.println();
+                gameID++;
             }
 
             return true;
@@ -154,6 +160,7 @@ public class ServerFacade {
 
         var maxGames = joinedGames.size();
 
+
         if(maxGames == 0 || Integer.parseInt(gameID) >= maxGames + 1){
             return false;
         }
@@ -161,6 +168,8 @@ public class ServerFacade {
         if(Integer.parseInt(gameID) == 0){
             return false;
         }
+
+        var realGameID = games.get((Integer.parseInt(gameID))-1).get("gameID");
 
         ChessGame game = new ChessGame();
         PrintBoard board = new PrintBoard(game);
