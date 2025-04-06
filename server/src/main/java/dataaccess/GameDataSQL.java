@@ -1,9 +1,6 @@
 package dataaccess;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import com.google.gson.Gson;
 import model.GameData;
 
@@ -132,10 +129,47 @@ public class GameDataSQL extends GameDataAccess{
         return games;
     }
 
-    public void makeMove(String username, ChessPosition start, ChessPosition end){
-        ChessMove move = new ChessMove(start, end, null);
+    public ChessGame makeMove(Integer gameID, ChessMove move){
+        System.out.println("TEST");
+        try (var conn = DatabaseManager.getConnection()) {
+            String query = "SELECT gameID, game FROM games WHERE gameID=?";
+            try (var ps = conn.prepareStatement(query)) {
+                ps.setInt(1, gameID);
+
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        ChessGame game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
+
+                        try{
+                            game.makeMove(move);
+                            System.out.println(game.getBoard().toString(true));
+
+                        }
+                        catch (InvalidMoveException moveException){
+                            System.out.println("INVALID MOVE");
+                            return null;
+                        }
 
 
+                        // Update the game in the database
+                        String update = "UPDATE games SET game=? WHERE gameID=?";
+                        try (var updatePs = conn.prepareStatement(update)) {
+                            updatePs.setString(1, new Gson().toJson(game));
+                            updatePs.setInt(2, gameID);
+                            updatePs.executeUpdate();
+                        }
+
+                        return game;
+                    } else {
+                        throw new DataAccessException("Game not found");
+                    }
+                }
+            }
+        } catch (SQLException | DataAccessException e ) {
+            System.out.println("CATCH");
+
+            return null;
+        }
     }
 
     public void clear(){

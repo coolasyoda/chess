@@ -1,6 +1,8 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,8 +90,11 @@ public class GameDataAccessSQLTest {
 
         gameDataAccess.joinGame(newGame.gameID(), "user1", "WHITE");
         newGame = gameDataAccess.joinGame(newGame.gameID(), "user2", "BLACK");
+        System.out.println(newGame.chessGame().getBoard().toString(true));
 
-        gameDataAccess.makeMove("user1");
+        ChessMove move = new ChessMove(new ChessPosition(2, 1), new ChessPosition(3, 1), null);
+
+        ChessGame movedGame = gameDataAccess.makeMove(newGame.gameID(), move);
 
 
     }
