@@ -79,7 +79,18 @@ public class GameDataAccessSQLTest {
     }
 
     @Test
-    public void posListGames() {
+    public void makeMoves() throws DataAccessException {
+        ChessGame game = new ChessGame();
+        GameData gameData = new GameData(null, null, null, "testGame", game);
+        GameData newGame = gameDataAccess.newGame(gameData);
+
+        GameData gameTest = new GameData(null, "user1", "user2", "testGame", game);
+
+        gameDataAccess.joinGame(newGame.gameID(), "user1", "WHITE");
+        newGame = gameDataAccess.joinGame(newGame.gameID(), "user2", "BLACK");
+
+        gameDataAccess.makeMove("user1");
+
 
     }
 

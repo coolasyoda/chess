@@ -34,6 +34,16 @@ public class ChessClient {
                 default -> help();
             };
         }
+        else if(state == State.GAMEPLAY){
+            return switch (cmd){
+                case "redraw" -> redraw();
+                case "leave" -> leave();
+                case "move" -> move();
+                case "resign" -> resign();
+                case "legal" -> legal();
+                default -> help();
+            };
+        }
         else{
             return switch (cmd) {
                 case "register" -> register(params);
@@ -159,6 +169,26 @@ public class ChessClient {
         return 0;
     }
 
+    public int redraw(){
+        return 0;
+    }
+
+    public int leave(){
+        return 0;
+    }
+
+    public int move(){
+        return 0;
+    }
+
+    public int resign(){
+        return 0;
+    }
+
+    public int legal(){
+        return 0;
+    }
+
     public int quit(){
         logout();
         return -1;
@@ -173,6 +203,16 @@ public class ChessClient {
                     - quit
                     """);
             return 1;
+        } else if (state == State.GAMEPLAY) {
+            System.out.println("""
+                    - redraw - to redraw the chess board
+                    - leave - leave the game
+                    - move <START> <END> <PROMOTION PIECE> - to move a piece. You can leave <PROMOTION PIECE> empty
+                                                              unless you want to specify a piece for pawn promotion.
+                    - resign - to forfeit the match
+                    - legal <START> - to highlight legal moves
+                    - help
+                    """);
         }
         System.out.println("""
                 - create <NAME> - create a game

@@ -1,6 +1,9 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.GameData;
 
@@ -129,7 +132,11 @@ public class GameDataSQL extends GameDataAccess{
         return games;
     }
 
+    public void makeMove(String username, ChessPosition start, ChessPosition end){
+        ChessMove move = new ChessMove(start, end, null);
 
+
+    }
 
     public void clear(){
         System.out.println("GAME CLEAR\n");
