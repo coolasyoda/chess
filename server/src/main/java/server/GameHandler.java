@@ -99,6 +99,19 @@ public class GameHandler {
         return GSON.toJson(gamesList);
     }
 
+    public Object makeMove(Request request, Response response) throws DataAccessException {
+        System.out.println("makeMove GameHandler");
+
+        String authToken = request.headers("authorization");
+
+        if(gameService.validateUser(authToken) == null){
+            response.status(401);
+            return GSON.toJson(Map.of("message", "Error: unauthorized"));
+        }
+
+
+        return null;
+    }
 
 
 }

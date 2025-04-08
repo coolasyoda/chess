@@ -1,6 +1,8 @@
 package ui;
 
 import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import client.ServerFacade;
 
 import java.util.Arrays;
@@ -204,14 +206,28 @@ public class ChessClient {
                 return 0;
             }
 
+            int start_column = letterToIndex(params[1].charAt(0));
+            int end_column = letterToIndex(params[2].charAt(0));
 
-//            server.moveFacade(params[0], ChessMove move);
+            if(start_column == 0 || end_column == 0){
+                System.out.println("Please enter valid positions (A8, b4, etc)");
+            }
+
+
+            ChessPosition start = new ChessPosition(params[1].charAt(1), start_column);
+            ChessPosition end = new ChessPosition(params[2].charAt(1), end_column);
+
+            ChessMove move = new ChessMove(start, end, null);
+
+
+
+            var test = server.moveFacade(params[0], move);
             System.out.println("SUCCESS");
         }
 
 
 
-        System.out.println("TEST2");
+        System.out.println("Please enter move: <GAME ID> <START (A2)> <END (A3)>");
 
 
         return 0;
@@ -262,6 +278,34 @@ public class ChessClient {
                 """);
 
         return 1;
+    }
+
+    private int letterToIndex(Character character){
+        if(character == 'a' || character == 'A'){
+            return 1;
+        }
+        if(character == 'b' || character == 'B'){
+            return 2;
+        }
+        if(character == 'c' || character == 'C'){
+            return 3;
+        }
+        if(character == 'd' || character == 'D'){
+            return 4;
+        }
+        if(character == 'e' || character == 'E'){
+            return 5;
+        }
+        if(character == 'f' || character == 'F'){
+            return 6;
+        }
+        if(character == 'g' || character == 'G'){
+            return 7;
+        }
+        if(character == 'h' || character == 'h'){
+            return 8;
+        }
+        return 0;
     }
 
 }

@@ -1,6 +1,7 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import ui.PrintBoard;
 import ui.ResponseException;
@@ -178,11 +179,45 @@ public class ServerFacade {
         return true;
     }
 
-    public boolean moveFacade(String gameID){
+    public boolean moveFacade(String gameID, ChessMove move) {
+        var path = "/game";
+
+        var maxGames = joinedGames.size();
 
 
+        if(maxGames == 0 || Integer.parseInt(gameID) >= maxGames + 1){
+            return false;
+        }
 
+        if(Integer.parseInt(gameID) == 0 || Integer.parseInt(gameID) < 0){
+            return false;
+        }
 
+        Map<String, Object> request = new HashMap<>();
+        request.put("gameID", Integer.parseInt(gameID));
+
+        Map<String, Integer> start = new HashMap<>();
+        start.put("row", move.getStartPosition().getRow());
+        start.put("col", move.getStartPosition().getColumn());
+
+        Map<String, Integer> end = new HashMap<>();
+        end.put("row", move.getEndPosition().getRow());
+        end.put("col", move.getEndPosition().getColumn());
+
+        Map<String, Object> moveObject = new HashMap<>();
+        moveObject.put("start", start);
+        moveObject.put("end", end);
+        moveObject.put("promotion", move.getPromotionPiece());
+
+        request.put("move", moveObject);
+
+        try{
+            this.makeRequest("MAKE_MOVE", path, request, null);
+            return true;
+        }
+        catch (ResponseException e){
+            System.out.println("MOVE FAILED");
+        }
 
         return false;
     }
