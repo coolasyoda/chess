@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import model.GameData;
 import model.UserData;
 
@@ -83,6 +84,11 @@ public class GameDataAccess {
 
     public List<GameData> listGames() throws DataAccessException {
         return List.copyOf(gameDataMap.values());
+    }
+
+    public ChessGame makeMove(Integer gameID, ChessMove move){
+        System.out.println("makeMove only supported in SQL");
+        return null;
     }
 
     public void clear(){

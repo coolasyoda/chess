@@ -1,6 +1,8 @@
 package service;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
@@ -254,5 +256,24 @@ public class ServiceTests {
         Assertions.assertNull(gameService.joinGame(createdGame.gameID(), "", "BLACK"));
     }
 
+    @Test
+    public void movePiece() throws DataAccessException {
+        UserData userData1 = new UserData("testUser1", "testPassword", "");
+        userService.registerUser(userData1);
+        UserData userData2 = new UserData("testUser2", "testPassword", "");
+        userService.registerUser(userData2);
+
+        ChessGame game = new ChessGame();
+
+        GameData gameData = new GameData(null, null, null, "testGame", game);
+        GameData createdGame = gameService.createGame(gameData);
+
+        gameData = gameService.joinGame(createdGame.gameID(), "testUser1", "WHITE");
+        gameData = gameService.joinGame(createdGame.gameID(), "testUser2", "BLACK");
+
+        ChessMove move = new ChessMove(new ChessPosition(2, 1), new ChessPosition(3, 1), null);
+        gameService.makeMove(gameData.gameID(), move);
+
+    }
 
 }

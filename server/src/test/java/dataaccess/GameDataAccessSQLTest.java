@@ -81,7 +81,7 @@ public class GameDataAccessSQLTest {
     }
 
     @Test
-    public void makeMoves() throws DataAccessException {
+    public void makeMove() throws DataAccessException {
         ChessGame game = new ChessGame();
         GameData gameData = new GameData(null, null, null, "testGame", game);
         GameData newGame = gameDataAccess.newGame(gameData);

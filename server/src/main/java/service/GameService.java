@@ -1,5 +1,7 @@
 package service;
 
+import chess.ChessGame;
+import chess.ChessMove;
 import dataaccess.AuthDataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.GameDataAccess;
@@ -35,10 +37,14 @@ public class GameService {
     }
 
     public List<GameData> listGames(String authToken) throws DataAccessException {
-        System.out.println("TEST 2");
         if(validateUser(authToken) == null){
             return null;
         }
         return gameDataAccess.listGames();
     }
+
+    public ChessGame makeMove(Integer gameID, ChessMove move){
+        return gameDataAccess.makeMove(gameID, move);
+    }
+
 }
