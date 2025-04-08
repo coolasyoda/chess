@@ -178,6 +178,21 @@ public class ServerFacade {
         return true;
     }
 
+    public boolean moveFacade(String gameID){
+
+
+
+
+
+        return false;
+    }
+
+
+
+
+
+
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverURL + path)).toURL();

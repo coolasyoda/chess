@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessMove;
 import client.ServerFacade;
 
 import java.util.Arrays;
@@ -15,7 +16,6 @@ public class ChessClient {
     public ChessClient(String serverURL){
         server = new ServerFacade(serverURL);
         this.serverURL = serverURL;
-
 
     }
 
@@ -38,7 +38,7 @@ public class ChessClient {
             return switch (cmd){
                 case "redraw" -> redraw();
                 case "leave" -> leave();
-                case "move" -> move();
+                case "move" -> move(params);
                 case "resign" -> resign();
                 case "legal" -> legal();
                 default -> help();
@@ -137,6 +137,8 @@ public class ChessClient {
                 System.out.println("Failed to join game");
                 return 0;
             }
+            state = State.GAMEPLAY;
+            help();
             return 1;
         }
 
@@ -162,6 +164,7 @@ public class ChessClient {
                 System.out.println("Failed to observe game");
                 return 0;
             }
+            state = State.GAMEPLAY;
             return 1;
         }
 
@@ -177,7 +180,40 @@ public class ChessClient {
         return 0;
     }
 
-    public int move(){
+    public int move(String... params){
+        if(params.length == 3 || params.length == 4){
+            for (int i = 0; i < params[0].length(); i++) {
+                if (!Character.isDigit(params[0].charAt(i))) {
+                    System.out.println("Please enter valid gameID");
+                    return 0;
+                }
+            }
+
+            if(params[1].length() > 2 || params[2].length() > 2){
+                System.out.println("Please enter valid positions (A8, b4, etc)");
+                return 0;
+            }
+
+            if (!Character.isAlphabetic(params[1].charAt(0)) || !Character.isAlphabetic(params[2].charAt(0))) {
+                System.out.println("Please enter valid positions (A8, b4, etc)");
+                return 0;
+            }
+
+            if (!Character.isDigit(params[1].charAt(1)) || !Character.isDigit(params[2].charAt(1))) {
+                System.out.println("Please enter valid positions (A8, b4, etc)");
+                return 0;
+            }
+
+
+//            server.moveFacade(params[0], ChessMove move);
+            System.out.println("SUCCESS");
+        }
+
+
+
+        System.out.println("TEST2");
+
+
         return 0;
     }
 
@@ -213,6 +249,7 @@ public class ChessClient {
                     - legal <START> - to highlight legal moves
                     - help
                     """);
+            return 1;
         }
         System.out.println("""
                 - create <NAME> - create a game
