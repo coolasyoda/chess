@@ -175,10 +175,12 @@ public class ChessClient {
     }
 
     public int redraw(){
+        state = State.POSTLOGIN;
         return 0;
     }
 
     public int leave(){
+        state = State.POSTLOGIN;
         return 0;
     }
 
@@ -214,11 +216,10 @@ public class ChessClient {
             }
 
 
-            ChessPosition start = new ChessPosition(params[1].charAt(1), start_column);
-            ChessPosition end = new ChessPosition(params[2].charAt(1), end_column);
+            ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[1].charAt(1))), start_column);
+            ChessPosition end = new ChessPosition(Integer.parseInt(String.valueOf(params[2].charAt(1))), end_column);
 
             ChessMove move = new ChessMove(start, end, null);
-
 
 
             var test = server.moveFacade(params[0], move);
@@ -234,10 +235,12 @@ public class ChessClient {
     }
 
     public int resign(){
+        state = State.POSTLOGIN;
         return 0;
     }
 
     public int legal(){
+        state = State.POSTLOGIN;
         return 0;
     }
 

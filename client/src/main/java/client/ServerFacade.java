@@ -180,7 +180,7 @@ public class ServerFacade {
     }
 
     public boolean moveFacade(String gameID, ChessMove move) {
-        var path = "/game";
+        var path = "/game/move";
 
         var maxGames = joinedGames.size();
 
@@ -212,11 +212,12 @@ public class ServerFacade {
         request.put("move", moveObject);
 
         try{
-            this.makeRequest("MAKE_MOVE", path, request, null);
+            System.out.println("REQUEST JSON: " + new Gson().toJson(request));
+            this.makeRequest("PUT", path, request, null);
             return true;
         }
         catch (ResponseException e){
-            System.out.println("MOVE FAILED");
+            System.out.println(e);
         }
 
         return false;

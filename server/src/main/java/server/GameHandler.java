@@ -1,5 +1,9 @@
 package server;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataaccess.AuthDataAccess;
@@ -109,8 +113,39 @@ public class GameHandler {
             return GSON.toJson(Map.of("message", "Error: unauthorized"));
         }
 
+        System.out.println("RAW REQUEST BODY: " + request.body());
 
-        return null;
+        Map<String, Object> moveBody = GSON.fromJson(request.body(), Map.class);
+
+        Integer gameID = ((Number) moveBody.get("gameID")).intValue();
+
+        Map<String, Object> moveMap = (Map<String, Object>) moveBody.get("move");
+
+        Map<String, Integer> startMap = (Map<String, Integer>) moveMap.get("start");
+        Map<String, Integer> endMap = (Map<String, Integer>) moveMap.get("end");
+
+
+        int startRow = ((Number) startMap.get("row")).intValue();
+        int startCol = ((Number) startMap.get("col")).intValue();
+        int endRow = ((Number) endMap.get("row")).intValue();
+        int endCol = ((Number) endMap.get("col")).intValue();
+
+        ChessPosition start = new ChessPosition(startRow, startCol);
+        ChessPosition end = new ChessPosition(endRow, endCol);
+
+        ChessPiece.PieceType promotion = null;
+        if (moveMap.containsKey("promotion")) {
+            //CONVERT TO ACTUAL PIECE
+            //promotion = (String) moveMap.get("promotion");
+        }
+
+        ChessMove move = new ChessMove(start, end, null);
+
+
+        gameService.makeMove(gameID, move);
+
+        response.status(200);
+        return GSON.toJson(Map.of("message", "Move successful"));
     }
 
 

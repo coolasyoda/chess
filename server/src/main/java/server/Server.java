@@ -56,7 +56,7 @@ public class Server {
         Spark.post("/game", gameHandler::createGame);
         Spark.put("/game", gameHandler::joinGame);
         Spark.get("/game", gameHandler::listGames);
-        Spark.post("/game", gameHandler::makeMove);
+        Spark.put("/game/move", gameHandler::makeMove);
 
 
         //This line initializes the server and can be removed once you have a functioning endpoint 

@@ -166,7 +166,7 @@ public class GameDataSQL extends GameDataAccess{
                 }
             }
         } catch (SQLException | DataAccessException e ) {
-            System.out.println("CATCH");
+            System.out.println("MOVE CATCH");
 
             return null;
         }

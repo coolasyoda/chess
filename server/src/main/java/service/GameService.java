@@ -44,6 +44,7 @@ public class GameService {
     }
 
     public ChessGame makeMove(Integer gameID, ChessMove move){
+        System.out.println("Service makeMove");
         return gameDataAccess.makeMove(gameID, move);
     }
 
