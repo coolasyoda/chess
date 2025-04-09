@@ -113,17 +113,19 @@ public class GameHandler {
             return GSON.toJson(Map.of("message", "Error: unauthorized"));
         }
 
-        System.out.println("RAW REQUEST BODY: " + request.body());
-
         Map<String, Object> moveBody = GSON.fromJson(request.body(), Map.class);
 
         Integer gameID = ((Number) moveBody.get("gameID")).intValue();
 
         Map<String, Object> moveMap = (Map<String, Object>) moveBody.get("move");
 
-        Map<String, Integer> startMap = (Map<String, Integer>) moveMap.get("start");
-        Map<String, Integer> endMap = (Map<String, Integer>) moveMap.get("end");
+        Map<String, Object> startMap = (Map<String, Object>) moveMap.get("start");
+        Map<String, Object> endMap = (Map<String, Object>) moveMap.get("end");
 
+        System.out.println("moveBody: " + moveBody);
+        System.out.println("moveMap: " + moveMap);
+        System.out.println("startMap: " + startMap);
+        System.out.println("endMap: " + endMap);
 
         int startRow = ((Number) startMap.get("row")).intValue();
         int startCol = ((Number) startMap.get("col")).intValue();
@@ -142,10 +144,15 @@ public class GameHandler {
         ChessMove move = new ChessMove(start, end, null);
 
 
-        gameService.makeMove(gameID, move);
+        ChessGame game = gameService.makeMove(gameID, move);
+
+        if(game == null){
+            response.status(402);
+            return GSON.toJson(Map.of("message", "Error: invalid move"));
+        }
 
         response.status(200);
-        return GSON.toJson(Map.of("message", "Move successful"));
+        return GSON.toJson(game);
     }
 
 

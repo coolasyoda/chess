@@ -76,6 +76,13 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
+//        System.out.println("START: ROW:" + move.getStartPosition().getRow());
+//        System.out.println("START: COLUMN:" + move.getStartPosition().getColumn());
+//        System.out.println("END: ROW:" + move.getEndPosition().getRow());
+//        System.out.println("END: COLUMN:" + move.getEndPosition().getColumn());
+        System.out.println("Before:");
+        System.out.println(board.toString(true));
+
         //No piece moved exception
         if(board.getPiece(move.getStartPosition()) == null){
             throw new InvalidMoveException("NO PIECE MOVED");
@@ -97,12 +104,17 @@ public class ChessGame {
                 else{
                     teamTurn = TeamColor.WHITE;
                 }
+
+                System.out.println("After:");
+                System.out.println(board.toString(true));
+
                 return;
 
             } else if (validMoves.get(i).equals(move) && !tryMove(move)) {
                 throw new InvalidMoveException("PUTS KING IN CHECK");
             }
         }
+
         throw new InvalidMoveException("INVALID MOVE");
     }
 

@@ -212,8 +212,11 @@ public class ServerFacade {
         request.put("move", moveObject);
 
         try{
-            System.out.println("REQUEST JSON: " + new Gson().toJson(request));
-            this.makeRequest("PUT", path, request, null);
+            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
+
+            PrintBoard board = new PrintBoard(game);
+            board.printBoard(true);
+
             return true;
         }
         catch (ResponseException e){

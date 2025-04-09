@@ -221,16 +221,11 @@ public class ChessClient {
 
             ChessMove move = new ChessMove(start, end, null);
 
-
             var test = server.moveFacade(params[0], move);
-            System.out.println("SUCCESS");
+            return 1;
         }
 
-
-
-        System.out.println("Please enter move: <GAME ID> <START (A2)> <END (A3)>");
-
-
+        System.out.println("Please enter move: <START (A2)> <END (A3)>");
         return 0;
     }
 
