@@ -87,7 +87,7 @@ public class GameDataAccess {
     }
 
     public ChessGame makeMove(Integer gameID, ChessMove move){
-        System.out.println("makeMove only supported in SQL");
+        System.out.println("makeMove only implemented in SQL");
         return null;
     }
 
@@ -97,4 +97,8 @@ public class GameDataAccess {
     }
 
 
+    public ChessGame getGame(Integer gameID) {
+        System.out.println("getGame only implemented in SQL");
+        return null;
+    }
 }

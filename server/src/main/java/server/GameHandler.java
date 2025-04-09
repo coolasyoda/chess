@@ -58,8 +58,6 @@ public class GameHandler {
             return GSON.toJson(Map.of("message", "Error: bad request"));
         }
 
-        System.out.println("Raw Request Body: " + request.body());
-
         String playerColor = gameRequest.get("playerColor").getAsString();
         int gameID = gameRequest.get("gameID").getAsInt();
 
@@ -97,7 +95,7 @@ public class GameHandler {
         List<GameData> games = gameService.listGames(authToken);
         Map<String, List<GameData>> gamesList = Map.of("games", games);
 
-        System.out.println(games.toString());
+//        System.out.println(games.toString());
 
         response.status(200);
         return GSON.toJson(gamesList);
@@ -150,6 +148,34 @@ public class GameHandler {
             response.status(402);
             return GSON.toJson(Map.of("message", "Error: invalid move"));
         }
+
+        response.status(200);
+        return GSON.toJson(game);
+    }
+
+    public Object getGame(Request request, Response response) throws DataAccessException {
+        String authToken = request.headers("authorization");
+        System.out.println("GET GAME");
+
+        if(gameService.validateUser(authToken) == null){
+            response.status(401);
+            return GSON.toJson(Map.of("message", "Error: unauthorized"));
+        }
+
+        System.out.println("RAW REQUEST: " + request.body());
+
+        JsonObject gameRequest = GSON.fromJson(request.body(), JsonObject.class);
+
+        int gameID = gameRequest.get("gameID").getAsInt();
+
+        ChessGame game = gameService.getGame(gameID);
+
+        if(game == null){
+            response.status(402);
+            return GSON.toJson(Map.of("message", "Error: couldn't retrieve game"));
+        }
+
+        System.out.println(game.toString());
 
         response.status(200);
         return GSON.toJson(game);

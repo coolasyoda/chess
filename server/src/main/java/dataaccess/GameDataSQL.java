@@ -130,7 +130,6 @@ public class GameDataSQL extends GameDataAccess{
     }
 
     public ChessGame makeMove(Integer gameID, ChessMove move){
-        System.out.println("TEST");
         try (var conn = DatabaseManager.getConnection()) {
             String query = "SELECT gameID, game FROM games WHERE gameID=?";
             try (var ps = conn.prepareStatement(query)) {
@@ -168,6 +167,26 @@ public class GameDataSQL extends GameDataAccess{
         } catch (SQLException | DataAccessException e ) {
             System.out.println("MOVE CATCH");
 
+            return null;
+        }
+    }
+
+    public ChessGame getGame(Integer gameID){
+        System.out.println("service getGame");
+        try (var conn = DatabaseManager.getConnection()) {
+            String query = "SELECT gameID, game FROM games WHERE gameID=?";
+            try (var ps = conn.prepareStatement(query)) {
+                ps.setInt(1, gameID);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return new Gson().fromJson(rs.getString("game"), ChessGame.class);
+                    } else {
+                        throw new DataAccessException("Game not found");
+                    }
+                }
+            }
+        } catch (SQLException | DataAccessException e ) {
+            System.out.println("GET GAME CATCH");
             return null;
         }
     }

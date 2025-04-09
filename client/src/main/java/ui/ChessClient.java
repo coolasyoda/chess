@@ -14,6 +14,7 @@ public class ChessClient {
 
 
     private State state = State.PRELOGIN;
+    private int activeGame = 0;
 
     public ChessClient(String serverURL){
         server = new ServerFacade(serverURL);
@@ -167,6 +168,7 @@ public class ChessClient {
                 return 0;
             }
             state = State.GAMEPLAY;
+            activeGame = Integer.parseInt(params[0]);
             return 1;
         }
 
@@ -175,8 +177,13 @@ public class ChessClient {
     }
 
     public int redraw(){
-        state = State.POSTLOGIN;
-        return 0;
+
+        System.out.println("ACTIVE GAME = " + activeGame);
+        if(!server.redrawFacade(activeGame)){
+            System.out.println("Failed to redraw game");
+            return 0;
+        }
+        return 1;
     }
 
     public int leave(){
