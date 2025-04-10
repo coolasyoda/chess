@@ -1,18 +1,41 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import static ui.EscapeSequences.*;
 
 public class PrintBoard {
 
     ChessGame game;
+    List<ChessPosition> positions = new ArrayList<>();
 
-    public PrintBoard(ChessGame game){
+    public PrintBoard(ChessGame game, Collection<ChessMove> moves){
         this.game = game;
+
+        if(moves != null){
+            for (ChessMove move : moves) {
+                positions.add(move.getEndPosition());
+            }
+        }
+
     }
 
 
     public void printBoard(boolean white){
+
+        if(positions != null){
+            System.out.println("TEST");
+            System.out.println(positions.toString());
+        }
+
+
+
         boolean toggle = true;
         String chessBoard = game.getBoard().toString(white);
         StringBuilder boardString = new StringBuilder();
@@ -27,7 +50,23 @@ public class PrintBoard {
         }
         boardString.append(RESET_BG_COLOR);
         boardString.append("\n");
+
+        int row = 0;
+        int col = 0;
+
         for(int i=0; i<chessLength; i++){
+
+            if(white){
+                row = 7 - (i / 9);
+                col = i % 9;
+            }
+            else{
+                row = 7 - (i / 9);
+                col = i % 9;
+            }
+
+            System.out.println(String.valueOf(row) + String.valueOf(col));
+
             if(i%9 == 0){
                 boardString.append(SET_BG_COLOR_LIGHT_GREY);
                 if(white){
@@ -38,10 +77,20 @@ public class PrintBoard {
                 }
             }
             if(toggle){
-                boardString.append(SET_BG_COLOR_BEIGE);
+                if(positions.contains(new ChessPosition(row + 1, col + 1))){
+                    boardString.append(SET_BG_COLOR_GREEN);
+                }
+                else{
+                    boardString.append(SET_BG_COLOR_BEIGE);
+                }
             }
             else{
-                boardString.append(SET_BG_COLOR_BROWN);
+                if(positions.contains(new ChessPosition(row + 1, col + 1))){
+                    boardString.append(SET_BG_COLOR_DARK_GREEN);
+                }
+                else{
+                    boardString.append(SET_BG_COLOR_BROWN);
+                }
             }
             toggle = !toggle;
             switch (chessBoard.charAt(i)) {

@@ -34,6 +34,10 @@ public class ChessPosition {
         return col;
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf(row) + String.valueOf(col);
+    }
 
     @Override
     public boolean equals(Object o) {

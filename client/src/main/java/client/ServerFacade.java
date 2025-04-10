@@ -9,10 +9,7 @@ import ui.ResponseException;
 
 import java.io.*;
 import java.net.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class ServerFacade {
 
@@ -115,7 +112,7 @@ public class ServerFacade {
             makeRequest("PUT", path, request, null);
             System.out.println("Joined Game "+ gameID);
             ChessGame game = new ChessGame();
-            PrintBoard board = new PrintBoard(game);
+            PrintBoard board = new PrintBoard(game, null);
             board.printBoard(playerType);
             return true;
         }
@@ -173,7 +170,7 @@ public class ServerFacade {
         var realGameID = games.get((Integer.parseInt(gameID))-1).get("gameID");
 
         ChessGame game = new ChessGame();
-        PrintBoard board = new PrintBoard(game);
+        PrintBoard board = new PrintBoard(game, null);
         board.printBoard(true);
 
         return true;
@@ -214,7 +211,7 @@ public class ServerFacade {
         try{
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
 
-            PrintBoard board = new PrintBoard(game);
+            PrintBoard board = new PrintBoard(game, null);
             board.printBoard(true);
 
             return true;
@@ -246,7 +243,7 @@ public class ServerFacade {
         var path = "/game/single";
         try {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
-            PrintBoard board = new PrintBoard(game);
+            PrintBoard board = new PrintBoard(game, null);
             board.printBoard(true);
             return true;
         }
@@ -276,8 +273,8 @@ public class ServerFacade {
         var path = "/game/single";
         try {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
-//            game.validMoves(startPosition);
-            PrintBoard board = new PrintBoard(game);
+            Collection<ChessMove> moves = game.validMoves(startPosition);
+            PrintBoard board = new PrintBoard(game, moves);
             board.printBoard(true);
             return true;
         }
