@@ -116,7 +116,8 @@ public class ServerFacade {
         if(Objects.equals((String) gameToMove.get("whiteUsername"), userUsername)
                 || Objects.equals((String) gameToMove.get("blackUsername"), userUsername)){
             redrawFacade((Integer) gameID);
-            UserGameCommand command = new ConnectCommand(authToken, (Integer) gameID);
+            UserGameCommand command = new ConnectCommand(authToken, (Integer) gameID, true);
+
             ws.sendCommand(new Gson().toJson(command));
 
             return true;

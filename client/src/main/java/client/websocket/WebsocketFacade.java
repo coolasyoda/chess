@@ -18,11 +18,8 @@ public class WebsocketFacade extends Endpoint {
 
     public WebsocketFacade(String url) throws ResponseException {
         try {
-            System.out.println("TEST WEBSOCKET FACADE");
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
-
-            System.out.println("SocketURI: " + socketURI);
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);

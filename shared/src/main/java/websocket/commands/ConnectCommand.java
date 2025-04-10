@@ -2,7 +2,7 @@ package websocket.commands;
 
 public class ConnectCommand extends UserGameCommand{
 
-    public ConnectCommand(String authToken, int gameID){
-        super(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID);
+    public ConnectCommand(String authToken, int gameID, boolean observer){
+        super(CommandType.CONNECT, authToken, gameID, observer);
     }
 }
