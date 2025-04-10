@@ -29,21 +29,20 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
-        UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
 
         System.out.println("Received command: " + message);
         switch (jsonObject.get("commandType").getAsString()) {
             case "CONNECT" -> {
 
-                if(jsonObject.get("observer") == null){
-                    System.out.println("OBSERVER IS NULL");
+                if(jsonObject.get("player") == null){
+                    System.out.println("PLAYER IS NULL");
                     return;
                 }
 
                 connect(session,    jsonObject.get("gameID").getAsInt(),
                                     jsonObject.get("authToken").getAsString(),
-                                    jsonObject.get("observer").getAsBoolean()    );
+                                    jsonObject.get("player").getAsString()    );
 
             }
             case "MAKE_MOVE" -> makeMove();
@@ -52,11 +51,14 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(Session session, int gameID, String authToken, boolean observe) {
+    private void connect(Session session, int gameID, String authToken, String player) {
         AuthDataAccess authDataAccess = new AuthDataSQL();
         try {
             System.out.println("CONNECT: " + authDataAccess.validAuthToken(authToken));
-            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(authDataAccess.validAuthToken(authToken))));
+
+            String message = authDataAccess.validAuthToken(authToken) + " has joined game " + gameID + " as " + player;
+
+            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
         }
         catch (DataAccessException | IOException e){
             System.out.println("Couldn't retrieve username");

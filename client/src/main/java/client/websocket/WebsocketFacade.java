@@ -1,6 +1,8 @@
 package client.websocket;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import exception.ResponseException;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
@@ -9,6 +11,7 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 //need to extend Endpoint for websocket to work properly
 public class WebsocketFacade extends Endpoint {
@@ -37,6 +40,12 @@ public class WebsocketFacade extends Endpoint {
     }
 
     private void messageHandle(String message){
+        JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
+
+        if(Objects.equals(jsonObject.get("serverMessageType").getAsString(), "NOTIFICATION")){
+            System.out.println("NOTIFICATION: " + jsonObject.get("message").getAsString());
+        }
+
         System.out.println("messageHandle: " + message);
     }
 

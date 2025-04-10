@@ -116,7 +116,7 @@ public class ServerFacade {
         if(Objects.equals((String) gameToMove.get("whiteUsername"), userUsername)
                 || Objects.equals((String) gameToMove.get("blackUsername"), userUsername)){
             redrawFacade((Integer) gameID);
-            UserGameCommand command = new ConnectCommand(authToken, (Integer) gameID, true);
+            UserGameCommand command = new ConnectCommand(authToken, (Integer) gameID, color);
 
             ws.sendCommand(new Gson().toJson(command));
 
@@ -373,7 +373,6 @@ public class ServerFacade {
     }
 
     public boolean wsConnect(String serverURL){
-        System.out.println("wsConnect");
         try{
             ws = new WebsocketFacade(serverURL);
             return true;
