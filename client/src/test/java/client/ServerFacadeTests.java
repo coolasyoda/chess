@@ -17,7 +17,7 @@ public class ServerFacadeTests {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        client = new ChessClient("http://localhost:" + port);
+        client = new ChessClient("http://localhost:" + port, null);
         client.register("username", "password", null);
         client.logout();
     }

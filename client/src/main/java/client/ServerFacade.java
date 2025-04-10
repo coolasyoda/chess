@@ -3,8 +3,8 @@ package client;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import client.websocket.WebsocketFacade;
 import com.google.gson.Gson;
-import model.GameData;
 import ui.PrintBoard;
 import exception.ResponseException;
 
@@ -19,6 +19,9 @@ public class ServerFacade {
     private String userUsername = null;
     Map<Integer, Object> joinedGames = new HashMap<>();
     List<Map<String, Object>> games;
+
+    private WebsocketFacade ws;
+
 
     public ServerFacade(String url){
         serverURL = url;
@@ -126,12 +129,13 @@ public class ServerFacade {
             ChessGame game = new ChessGame();
             PrintBoard board = new PrintBoard(game, null);
             board.printBoard(playerType);
-            return true;
+            return wsConnect(serverURL);
         }
         catch (ResponseException responseException){
             return false;
         }
     }
+
 
     public boolean listFacade(){
         var path = "/game";
@@ -358,10 +362,20 @@ public class ServerFacade {
     }
 
     public boolean resignFacade(Integer gameID){
-
-
         System.out.println("RESIGN FACADE");
         return false;
+    }
+
+    public boolean wsConnect(String serverURL){
+        System.out.println("wsConnect");
+        try{
+            ws = new WebsocketFacade(serverURL);
+            return true;
+        }
+        catch(ResponseException e) {
+            System.out.println("Failed to connect to WebSocket");
+            return false;
+        }
     }
 
 
@@ -390,12 +404,14 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
+
             if (authToken != null) {
                 http.setRequestProperty("authorization", authToken);
             }
 
             writeBody(request, http);
             http.connect();
+
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (ResponseException ex) {
@@ -408,7 +424,6 @@ public class ServerFacade {
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
-            http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());

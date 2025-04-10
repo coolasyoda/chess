@@ -1,6 +1,7 @@
 package ui;
 
 import client.ServerFacade;
+import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
 

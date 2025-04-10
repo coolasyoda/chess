@@ -1,8 +1,6 @@
 package ui;
 
-import chess.ChessGame;
 import chess.ChessMove;
-import chess.ChessPiece;
 import chess.ChessPosition;
 import client.ServerFacade;
 
@@ -15,14 +13,13 @@ public class ChessClient {
     private final ServerFacade server;
     private final String serverURL;
 
-
     private State state = State.PRELOGIN;
     private int activeGameID = 0;
 
     public ChessClient(String serverURL){
-        server = new ServerFacade(serverURL);
         this.serverURL = serverURL;
 
+        server = new ServerFacade(serverURL);
     }
 
     public int eval(String input) {
@@ -73,6 +70,7 @@ public class ChessClient {
 
             System.out.println("Successfully Registered:");
             state = State.POSTLOGIN;
+            server.wsConnect(serverURL);
             help();
             return 1;
         }
