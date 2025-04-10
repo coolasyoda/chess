@@ -141,6 +141,7 @@ public class ChessClient {
                 System.out.println("Failed to join game");
                 return 0;
             }
+            activeGameID = Integer.parseInt(params[0]);
             state = State.GAMEPLAY;
             help();
             return 1;
@@ -179,7 +180,6 @@ public class ChessClient {
 
     public int redraw(){
 
-        System.out.println("ACTIVE GAME = " + activeGameID);
         if(!server.redrawFacade(activeGameID)){
             System.out.println("Failed to redraw game");
             return 0;
@@ -189,47 +189,44 @@ public class ChessClient {
 
     public int leave(){
         state = State.POSTLOGIN;
+        activeGameID = 0;
+        help();
         return 0;
     }
 
     public int move(String... params){
-        if(params.length == 3 || params.length == 4){
-            for (int i = 0; i < params[0].length(); i++) {
-                if (!Character.isDigit(params[0].charAt(i))) {
-                    System.out.println("Please enter valid gameID");
-                    return 0;
-                }
-            }
+        if(params.length == 2){
 
-            if(params[1].length() > 2 || params[2].length() > 2){
+            if(params[0].length() > 2 || params[1].length() > 2){
                 System.out.println("Please enter valid positions (A8, b4, etc)");
                 return 0;
             }
 
-            if (!Character.isAlphabetic(params[1].charAt(0)) || !Character.isAlphabetic(params[2].charAt(0))) {
+            if (!Character.isAlphabetic(params[0].charAt(0)) || !Character.isAlphabetic(params[1].charAt(0))) {
                 System.out.println("Please enter valid positions (A8, b4, etc)");
                 return 0;
             }
 
-            if (!Character.isDigit(params[1].charAt(1)) || !Character.isDigit(params[2].charAt(1))) {
+            if (!Character.isDigit(params[0].charAt(1)) || !Character.isDigit(params[1].charAt(1))) {
                 System.out.println("Please enter valid positions (A8, b4, etc)");
                 return 0;
             }
 
-            int start_column = letterToIndex(params[1].charAt(0));
-            int end_column = letterToIndex(params[2].charAt(0));
+            int start_column = letterToIndex(params[0].charAt(0));
+            int end_column = letterToIndex(params[1].charAt(0));
 
             if(start_column == 0 || end_column == 0){
                 System.out.println("Please enter valid positions (A8, b4, etc)");
             }
 
 
-            ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[1].charAt(1))), start_column);
-            ChessPosition end = new ChessPosition(Integer.parseInt(String.valueOf(params[2].charAt(1))), end_column);
+            ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), start_column);
+            ChessPosition end = new ChessPosition(Integer.parseInt(String.valueOf(params[1].charAt(1))), end_column);
 
             ChessMove move = new ChessMove(start, end, null);
-
-            var test = server.moveFacade(params[0], move);
+            if(!server.moveFacade(activeGameID, move)){
+                return 0;
+            }
             return 1;
         }
 
@@ -263,7 +260,9 @@ public class ChessClient {
 
             ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), start_column);
 
-            server.legalMoves(activeGameID, start);
+            if(!server.legalMoves(activeGameID, start)){
+                System.out.println("No legal moves for selected piece!");
+            }
 
             return 1;
         }

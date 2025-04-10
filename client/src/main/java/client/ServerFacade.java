@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
+import model.GameData;
 import ui.PrintBoard;
 import ui.ResponseException;
 
@@ -16,7 +17,7 @@ public class ServerFacade {
     private final String serverURL;
     private String authToken = null;
     private String userUsername = null;
-    Map<Integer, Boolean> joinedGames = new HashMap<>();
+    Map<Integer, Object> joinedGames = new HashMap<>();
     List<Map<String, Object>> games;
 
     public ServerFacade(String url){
@@ -103,6 +104,17 @@ public class ServerFacade {
             request.put("playerColor", "BLACK");
         }
 
+        Map<String, Object> gameToMove = (Map<String, Object>) joinedGames.get(gameID);
+
+        // Already in game
+        assert gameToMove != null;
+        if(Objects.equals((String) gameToMove.get("whiteUsername"), userUsername)
+                || Objects.equals((String) gameToMove.get("blackUsername"), userUsername)){
+            redrawFacade((Integer) gameID);
+            return true;
+        }
+
+
         var realGameID = games.get(((Integer) gameID)-1).get("gameID");
 
         request.put("gameID", realGameID);
@@ -138,7 +150,7 @@ public class ServerFacade {
                 String blackUsername = (String) game.get("blackUsername");
                 String gameName = (String) game.get("gameName");
 
-                joinedGames.put(readGameID, true);
+                joinedGames.put(readGameID, game);
 
                 System.out.println("Game ID: " + gameID + ", Name: " + gameName);
                 System.out.println("White Username: " + (whiteUsername != null ? whiteUsername : "AVAILABLE"));
@@ -169,29 +181,68 @@ public class ServerFacade {
 
         var realGameID = games.get((Integer.parseInt(gameID))-1).get("gameID");
 
-        ChessGame game = new ChessGame();
-        PrintBoard board = new PrintBoard(game, null);
-        board.printBoard(true);
+        Map<String, Object> request = new HashMap<>();
+        request.put("gameID", gameID);
 
-        return true;
+        var path = "/game/single";
+        try {
+            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
+            PrintBoard board = new PrintBoard(game, null);
+            board.printBoard(true);
+            return true;
+        }
+        catch (ResponseException responseException){
+            System.out.println("CATCH");
+            return false;
+        }
+
     }
 
-    public boolean moveFacade(String gameID, ChessMove move) {
-        var path = "/game/move";
-
+    public boolean moveFacade(Integer gameID, ChessMove move) {
         var maxGames = joinedGames.size();
 
-
-        if(maxGames == 0 || Integer.parseInt(gameID) >= maxGames + 1){
+        if(maxGames == 0 || gameID >= maxGames + 1){
             return false;
         }
 
-        if(Integer.parseInt(gameID) == 0 || Integer.parseInt(gameID) < 0){
+        if(gameID == 0 || gameID < 0){
             return false;
         }
 
+
+        boolean white = true;
+        int isInGame = isInGameAsWhite(gameID);
+
+        if(isInGame == -1){
+            return false;
+        }
+        else{
+            white = (isInGame == 1);
+        }
+
+        var path = "/game/single";
         Map<String, Object> request = new HashMap<>();
-        request.put("gameID", Integer.parseInt(gameID));
+        request.put("gameID", gameID);
+        try {
+            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
+            if( !( (game.getTeamTurn() == ChessGame.TeamColor.WHITE && white)
+                    || (game.getTeamTurn() == ChessGame.TeamColor.BLACK && !white) ) ){
+                System.out.println("Please wait your turn!");
+                return false;
+            }
+
+        }
+        catch (ResponseException responseException){
+            System.out.println("Could not retrieve game!");
+            return false;
+        }
+
+
+
+        path = "/game/move";
+
+        request.clear();
+        request.put("gameID", gameID);
 
         Map<String, Integer> start = new HashMap<>();
         start.put("row", move.getStartPosition().getRow());
@@ -212,12 +263,12 @@ public class ServerFacade {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
 
             PrintBoard board = new PrintBoard(game, null);
-            board.printBoard(true);
+            board.printBoard(white);
 
             return true;
         }
         catch (ResponseException e){
-            System.out.println(e);
+
         }
 
         return false;
@@ -240,15 +291,24 @@ public class ServerFacade {
         Map<String, Object> request = new HashMap<>();
         request.put("gameID", gameID);
 
+        boolean white = true;
+        int isInGame = isInGameAsWhite(Integer.valueOf(gameID));
+
+        if(isInGame == -1){
+            return false;
+        }
+        else{
+            white = (isInGame == 1);
+        }
+
         var path = "/game/single";
         try {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
             PrintBoard board = new PrintBoard(game, null);
-            board.printBoard(true);
+            board.printBoard(white);
             return true;
         }
         catch (ResponseException responseException){
-            System.out.println("CATCH");
             return false;
         }
     }
@@ -270,12 +330,25 @@ public class ServerFacade {
         Map<String, Object> request = new HashMap<>();
         request.put("gameID", gameID);
 
+        boolean white = true;
+        int isInGame = isInGameAsWhite(Integer.valueOf(gameID));
+
+        white = (isInGame != 0);
+
+
         var path = "/game/single";
         try {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
+
+            if( !( (game.getTeamTurn() == ChessGame.TeamColor.WHITE && white)
+                    || (game.getTeamTurn() == ChessGame.TeamColor.BLACK && !white) ) ){
+                System.out.println("Please wait your turn!");
+                return false;
+            }
+
             Collection<ChessMove> moves = game.validMoves(startPosition);
             PrintBoard board = new PrintBoard(game, moves);
-            board.printBoard(true);
+            board.printBoard(white);
             return true;
         }
         catch (ResponseException responseException){
@@ -283,6 +356,24 @@ public class ServerFacade {
             return false;
         }
     }
+
+    int isInGameAsWhite(Integer gameID){
+
+        Map<String, Object> gameToMove = (Map<String, Object>) joinedGames.get(gameID);
+
+        assert gameToMove != null;
+        if(Objects.equals((String) gameToMove.get("whiteUsername"), userUsername)){
+            return 1;
+        }
+        else if(Objects.equals((String) gameToMove.get("blackUsername"), userUsername)){
+            return 0;
+        }
+        else{
+            return -1;
+        }
+
+    }
+
 
 
 

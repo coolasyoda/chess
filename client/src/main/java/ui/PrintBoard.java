@@ -29,13 +29,6 @@ public class PrintBoard {
 
     public void printBoard(boolean white){
 
-        if(positions != null){
-            System.out.println("TEST");
-            System.out.println(positions.toString());
-        }
-
-
-
         boolean toggle = true;
         String chessBoard = game.getBoard().toString(white);
         StringBuilder boardString = new StringBuilder();
@@ -61,11 +54,9 @@ public class PrintBoard {
                 col = i % 9;
             }
             else{
-                row = 7 - (i / 9);
-                col = i % 9;
+                row = i / 9;
+                col = 7 - (i % 9);
             }
-
-            System.out.println(String.valueOf(row) + String.valueOf(col));
 
             if(i%9 == 0){
                 boardString.append(SET_BG_COLOR_LIGHT_GREY);
