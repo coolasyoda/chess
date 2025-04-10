@@ -6,11 +6,10 @@ import exception.ResponseException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import websocket.messages.Action;
+import websocket.commands.Action;
 import websocket.messages.Notification;
 
 import java.io.IOException;
-import java.util.Timer;
 
 
 @WebSocket
