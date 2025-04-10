@@ -12,6 +12,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.Server;
 import websocket.commands.UserGameCommand;
+import websocket.messages.NotificationMessage;
 
 
 import java.io.IOException;
@@ -40,9 +41,9 @@ public class WebSocketHandler {
                     return;
                 }
 
-                connect( jsonObject.get("gameID").getAsInt(),
-                                            jsonObject.get("authToken").getAsString(),
-                                            jsonObject.get("observer").getAsBoolean()    );
+                connect(session,    jsonObject.get("gameID").getAsInt(),
+                                    jsonObject.get("authToken").getAsString(),
+                                    jsonObject.get("observer").getAsBoolean()    );
 
             }
             case "MAKE_MOVE" -> makeMove();
@@ -51,12 +52,13 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(int gameID, String authToken, boolean observe) {
+    private void connect(Session session, int gameID, String authToken, boolean observe) {
         AuthDataAccess authDataAccess = new AuthDataSQL();
         try {
             System.out.println("CONNECT: " + authDataAccess.validAuthToken(authToken));
+            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(authDataAccess.validAuthToken(authToken))));
         }
-        catch (DataAccessException e){
+        catch (DataAccessException | IOException e){
             System.out.println("Couldn't retrieve username");
         }
 
@@ -73,6 +75,8 @@ public class WebSocketHandler {
     private void resign(){
         System.out.println("RESIGN");
     }
+
+
 
 
 }
