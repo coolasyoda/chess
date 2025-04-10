@@ -6,7 +6,7 @@ import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.GameData;
 import ui.PrintBoard;
-import ui.ResponseException;
+import exception.ResponseException;
 
 import java.io.*;
 import java.net.*;
