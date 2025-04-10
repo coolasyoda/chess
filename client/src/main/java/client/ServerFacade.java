@@ -357,7 +357,15 @@ public class ServerFacade {
         }
     }
 
-    int isInGameAsWhite(Integer gameID){
+    public boolean resignFacade(Integer gameID){
+
+
+        System.out.println("RESIGN FACADE");
+        return false;
+    }
+
+
+    private int isInGameAsWhite(Integer gameID){
 
         Map<String, Object> gameToMove = (Map<String, Object>) joinedGames.get(gameID);
 
@@ -373,8 +381,6 @@ public class ServerFacade {
         }
 
     }
-
-
 
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {

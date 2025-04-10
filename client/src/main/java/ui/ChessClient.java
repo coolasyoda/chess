@@ -7,6 +7,8 @@ import chess.ChessPosition;
 import client.ServerFacade;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.Scanner;
 
 public class ChessClient {
 
@@ -235,7 +237,22 @@ public class ChessClient {
     }
 
     public int resign(){
-        state = State.POSTLOGIN;
+        System.out.println("Are you sure you want to resign? Please answer YES or NO");
+
+        Scanner scanner = new Scanner(System.in);
+        String line = scanner.nextLine();
+
+        var tokens = line.toLowerCase().split(" ");
+        var params = Arrays.copyOfRange(tokens, 0, tokens.length);
+
+        if(params.length == 1 && Objects.equals(params[0], "yes")){
+            server.resignFacade(activeGameID);
+            System.out.println("Successfully resigned");
+            return 1;
+        }
+        System.out.println("Resign cancelled");
+
+
         return 0;
     }
 
