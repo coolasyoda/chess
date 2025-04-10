@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.AuthDataAccess;
 import dataaccess.AuthDataSQL;
@@ -11,7 +12,9 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.Server;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
 
@@ -35,19 +38,27 @@ public class WebSocketHandler {
         switch (jsonObject.get("commandType").getAsString()) {
             case "CONNECT" -> {
 
-                if(jsonObject.get("player") == null){
+                if(jsonObject.get("stringParam") == null){
                     System.out.println("PLAYER IS NULL");
                     return;
                 }
 
                 connect(session,    jsonObject.get("gameID").getAsInt(),
                                     jsonObject.get("authToken").getAsString(),
-                                    jsonObject.get("player").getAsString()    );
+                                    jsonObject.get("stringParam").getAsString()    );
 
             }
-            case "MAKE_MOVE" -> makeMove();
-            case "LEAVE" -> leave();
-            case "RESIGN" -> resign();
+            case "MAKE_MOVE" -> {
+
+                makeMove(session, new Gson().fromJson(message, MakeMoveCommand.class));
+
+            }
+            case "LEAVE" -> {
+                leave(session, jsonObject.get("gameID").getAsInt(), jsonObject.get("authToken").getAsString());
+            }
+            case "RESIGN" -> {
+                resign(session, jsonObject.get("gameID").getAsInt(), jsonObject.get("authToken").getAsString());
+            }
         }
     }
 
@@ -66,16 +77,52 @@ public class WebSocketHandler {
 
     }
 
-    private void makeMove(){
-        System.out.println("MAKE_MOVE");
+    private void makeMove(Session session, MakeMoveCommand command){
+        String authToken = command.getAuthToken();
+        ChessMove move = command.getMove();
+        Integer gameID = command.getGameID();
+
+        AuthDataAccess authDataAccess = new AuthDataSQL();
+        try {
+            System.out.println("MAKE MOVE: " + authDataAccess.validAuthToken(authToken) + " " + move.toString());
+
+            String message = authDataAccess.validAuthToken(authToken) + " made move " + move + " in game " + gameID;
+
+            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
+//            session.getRemote().sendString(new Gson().toJson(new LoadGameMessage()));
+
+        }
+        catch (DataAccessException | IOException e){
+            System.out.println("Couldn't retrieve username");
+        }
     }
 
-    private void leave(){
-        System.out.println("LEAVE");
+    private void leave(Session session, int gameID, String authToken){
+        AuthDataAccess authDataAccess = new AuthDataSQL();
+        try {
+            System.out.println("LEAVE: " + authDataAccess.validAuthToken(authToken));
+
+            String message = authDataAccess.validAuthToken(authToken) + " has left game " + gameID;
+
+            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
+        }
+        catch (DataAccessException | IOException e){
+            System.out.println("Couldn't retrieve username");
+        }
     }
 
-    private void resign(){
-        System.out.println("RESIGN");
+    private void resign(Session session, int gameID, String authToken){
+        AuthDataAccess authDataAccess = new AuthDataSQL();
+        try {
+            System.out.println("RESIGN: " + authDataAccess.validAuthToken(authToken));
+
+            String message = authDataAccess.validAuthToken(authToken) + " has resigned game " + gameID + "!";
+
+            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
+        }
+        catch (DataAccessException | IOException e){
+            System.out.println("Couldn't retrieve username");
+        }
     }
 
 

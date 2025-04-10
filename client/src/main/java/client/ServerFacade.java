@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import ui.PrintBoard;
 import exception.ResponseException;
 import websocket.commands.ConnectCommand;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.*;
@@ -108,6 +109,9 @@ public class ServerFacade {
         else if (Objects.equals(color, "black")) {
             request.put("playerColor", "BLACK");
         }
+        else{
+            return false;
+        }
 
         Map<String, Object> gameToMove = (Map<String, Object>) joinedGames.get(gameID);
 
@@ -116,6 +120,7 @@ public class ServerFacade {
         if(Objects.equals((String) gameToMove.get("whiteUsername"), userUsername)
                 || Objects.equals((String) gameToMove.get("blackUsername"), userUsername)){
             redrawFacade((Integer) gameID);
+
             UserGameCommand command = new ConnectCommand(authToken, (Integer) gameID, color);
 
             ws.sendCommand(new Gson().toJson(command));
@@ -274,6 +279,9 @@ public class ServerFacade {
 
             PrintBoard board = new PrintBoard(game, null);
             board.printBoard(white);
+
+            MakeMoveCommand command = new MakeMoveCommand(authToken, (Integer) gameID, move);
+            ws.sendCommand(new Gson().toJson(command));
 
             return true;
         }

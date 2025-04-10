@@ -46,6 +46,10 @@ public class WebsocketFacade extends Endpoint {
             System.out.println("NOTIFICATION: " + jsonObject.get("message").getAsString());
         }
 
+        if(Objects.equals(jsonObject.get("serverMessageType").getAsString(), "LOAD_GAME")){
+            System.out.println("NOTIFICATION: " + jsonObject.get("message").getAsString());
+        }
+
         System.out.println("messageHandle: " + message);
     }
 

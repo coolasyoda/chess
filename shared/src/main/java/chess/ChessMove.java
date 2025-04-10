@@ -49,7 +49,7 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return "START: " + getStartPosition().toString() + " END: " + getEndPosition().toString();
+        return getStartPosition().toString() + " " + getEndPosition().toString();
     }
 
     @Override

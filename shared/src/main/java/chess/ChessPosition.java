@@ -36,7 +36,18 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        return String.valueOf(row) + String.valueOf(col);
+        String position = "";
+        switch (col){
+            case 1 -> position = "A";
+            case 2 -> position = "B";
+            case 3 -> position = "C";
+            case 4 -> position = "D";
+            case 5 -> position = "E";
+            case 6 -> position = "F";
+            case 7 -> position = "G";
+            case 8 -> position = "H";
+        }
+        return position + String.valueOf(row);
     }
 
     @Override
