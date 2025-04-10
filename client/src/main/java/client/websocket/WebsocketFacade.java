@@ -43,9 +43,17 @@ public class WebsocketFacade extends Endpoint {
         System.out.println("messageHandle: " + message);
     }
 
+    public void sendCommand(String command){
+        this.session.getAsyncRemote().sendText(command);
+    }
+
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
 
     }
+
+
+
+
 
 }

@@ -89,6 +89,7 @@ public class ChessClient {
                 return 0;
             }
             state = State.POSTLOGIN;
+            server.wsConnect(serverURL);
             help();
             return 1;
         }

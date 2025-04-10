@@ -7,6 +7,8 @@ import client.websocket.WebsocketFacade;
 import com.google.gson.Gson;
 import ui.PrintBoard;
 import exception.ResponseException;
+import websocket.commands.ConnectCommand;
+import websocket.commands.UserGameCommand;
 
 import java.io.*;
 import java.net.*;
@@ -114,6 +116,9 @@ public class ServerFacade {
         if(Objects.equals((String) gameToMove.get("whiteUsername"), userUsername)
                 || Objects.equals((String) gameToMove.get("blackUsername"), userUsername)){
             redrawFacade((Integer) gameID);
+            UserGameCommand command = new ConnectCommand(authToken, (Integer) gameID);
+            ws.sendCommand(new Gson().toJson(command));
+
             return true;
         }
 
@@ -129,7 +134,7 @@ public class ServerFacade {
             ChessGame game = new ChessGame();
             PrintBoard board = new PrintBoard(game, null);
             board.printBoard(playerType);
-            return wsConnect(serverURL);
+            return true;
         }
         catch (ResponseException responseException){
             return false;
