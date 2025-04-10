@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -14,7 +15,7 @@ public class ChessClient {
 
 
     private State state = State.PRELOGIN;
-    private int activeGame = 0;
+    private int activeGameID = 0;
 
     public ChessClient(String serverURL){
         server = new ServerFacade(serverURL);
@@ -43,7 +44,7 @@ public class ChessClient {
                 case "leave" -> leave();
                 case "move" -> move(params);
                 case "resign" -> resign();
-                case "legal" -> legal();
+                case "legal" -> legal(params);
                 default -> help();
             };
         }
@@ -168,7 +169,7 @@ public class ChessClient {
                 return 0;
             }
             state = State.GAMEPLAY;
-            activeGame = Integer.parseInt(params[0]);
+            activeGameID = Integer.parseInt(params[0]);
             return 1;
         }
 
@@ -178,8 +179,8 @@ public class ChessClient {
 
     public int redraw(){
 
-        System.out.println("ACTIVE GAME = " + activeGame);
-        if(!server.redrawFacade(activeGame)){
+        System.out.println("ACTIVE GAME = " + activeGameID);
+        if(!server.redrawFacade(activeGameID)){
             System.out.println("Failed to redraw game");
             return 0;
         }
@@ -241,8 +242,34 @@ public class ChessClient {
         return 0;
     }
 
-    public int legal(){
-        state = State.POSTLOGIN;
+    public int legal(String... params){
+        if(params.length == 1) {
+
+            if (params[0].length() > 2) {
+                System.out.println("Please enter valid positions (A8, b4, etc)");
+                return 0;
+            }
+
+            if (!Character.isAlphabetic(params[0].charAt(0)) || !Character.isDigit(params[0].charAt(1))) {
+                System.out.println("Please enter valid positions (A8, b4, etc)");
+                return 0;
+            }
+
+            int start_column = letterToIndex(params[0].charAt(0));
+
+            if (start_column == 0) {
+                System.out.println("Please enter valid position (A8, b4, etc)");
+            }
+
+            ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), start_column);
+
+            server.legalMoves(activeGameID, start);
+
+            return 1;
+        }
+
+        System.out.println("Please enter input <POSITION>");
+
         return 0;
     }
 

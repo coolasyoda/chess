@@ -2,6 +2,7 @@ package client;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import ui.PrintBoard;
 import ui.ResponseException;
@@ -161,7 +162,6 @@ public class ServerFacade {
 
         var maxGames = joinedGames.size();
 
-
         if(maxGames == 0 || Integer.parseInt(gameID) >= maxGames + 1){
             return false;
         }
@@ -230,7 +230,35 @@ public class ServerFacade {
 
         var maxGames = joinedGames.size();
 
-        System.out.println("GAMES # = " + maxGames);
+        if(maxGames == 0 || gameID >= maxGames + 1){
+            return false;
+        }
+
+        if(gameID == 0){
+            return false;
+        }
+
+        var realGameID = games.get(gameID-1).get("gameID");
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("gameID", gameID);
+
+        var path = "/game/single";
+        try {
+            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
+            PrintBoard board = new PrintBoard(game);
+            board.printBoard(true);
+            return true;
+        }
+        catch (ResponseException responseException){
+            System.out.println("CATCH");
+            return false;
+        }
+    }
+
+    public boolean legalMoves(Integer gameID, ChessPosition startPosition){
+
+        var maxGames = joinedGames.size();
 
         if(maxGames == 0 || gameID >= maxGames + 1){
             return false;
@@ -248,6 +276,7 @@ public class ServerFacade {
         var path = "/game/single";
         try {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
+//            game.validMoves(startPosition);
             PrintBoard board = new PrintBoard(game);
             board.printBoard(true);
             return true;
