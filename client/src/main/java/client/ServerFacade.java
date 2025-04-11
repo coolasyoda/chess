@@ -204,6 +204,8 @@ public class ServerFacade {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
             PrintBoard board = new PrintBoard(game, null);
             board.printBoard(true);
+            UserGameCommand command = new ConnectCommand(authToken, Integer.parseInt(gameID), "observer");
+            ws.sendCommand(new Gson().toJson(command));
             return true;
         }
         catch (ResponseException responseException){
@@ -377,6 +379,11 @@ public class ServerFacade {
 
     public boolean resignFacade(Integer gameID){
         System.out.println("RESIGN FACADE");
+        return false;
+    }
+
+    public boolean leaveFacade(Integer gameID){
+        System.out.println("LEAVE FACADE");
         return false;
     }
 

@@ -75,7 +75,14 @@ public class WebSocketHandler {
         try {
             System.out.println("CONNECT: " + authDataAccess.validAuthToken(authToken));
 
-            String message = authDataAccess.validAuthToken(authToken) + " has joined game " + gameID + " as " + player;
+            String message;
+
+            if(Objects.equals(player, "observer")){
+                message = authDataAccess.validAuthToken(authToken) + " has joined game " + gameID + " as an observer";
+            }
+            else{
+                message = authDataAccess.validAuthToken(authToken) + " has joined game " + gameID + " as " + player;
+            }
 
             broadcastMessage(session, gameID, message);
             gameSessions.put(session, gameID);
@@ -99,8 +106,7 @@ public class WebSocketHandler {
             String message = authDataAccess.validAuthToken(authToken) + " made move " + move + " in game " + gameID;
 
             ChessGame game = Server.getGameDataAccess().getGame(gameID);
-//            System.out.println("GAME: ");
-//            System.out.println(game.getBoard().boardToString(true));
+
 
             broadcastMessage(session, gameID, message);
             broadcastGame(session, gameID, game);

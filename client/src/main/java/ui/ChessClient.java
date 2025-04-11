@@ -195,6 +195,7 @@ public class ChessClient {
     }
 
     public int leave(){
+        server.leaveFacade(activeGameID);
         state = State.POSTLOGIN;
         activeGameID = 0;
         help();
