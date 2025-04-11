@@ -22,6 +22,12 @@ public class ChessClient {
         server = new ServerFacade(serverURL);
     }
 
+    public ChessClient(String serverURL, Object object){
+        this.serverURL = serverURL;
+
+        server = new ServerFacade(serverURL);
+    }
+
     public int eval(String input) {
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
