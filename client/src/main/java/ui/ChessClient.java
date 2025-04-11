@@ -219,16 +219,16 @@ public class ChessClient {
                 return 0;
             }
 
-            int start_column = letterToIndex(params[0].charAt(0));
-            int end_column = letterToIndex(params[1].charAt(0));
+            int startColumn = letterToIndex(params[0].charAt(0));
+            int endColumn = letterToIndex(params[1].charAt(0));
 
-            if(start_column == 0 || end_column == 0){
+            if(startColumn == 0 || endColumn == 0){
                 System.out.println("Please enter valid positions (A8, b4, etc)");
             }
 
 
-            ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), start_column);
-            ChessPosition end = new ChessPosition(Integer.parseInt(String.valueOf(params[1].charAt(1))), end_column);
+            ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), startColumn);
+            ChessPosition end = new ChessPosition(Integer.parseInt(String.valueOf(params[1].charAt(1))), endColumn);
 
             ChessMove move = new ChessMove(start, end, null);
             if(!server.moveFacade(activeGameID, move)){
@@ -274,13 +274,13 @@ public class ChessClient {
                 return 0;
             }
 
-            int start_column = letterToIndex(params[0].charAt(0));
+            int startColumn = letterToIndex(params[0].charAt(0));
 
-            if (start_column == 0) {
+            if (startColumn == 0) {
                 System.out.println("Please enter valid position (A8, b4, etc)");
             }
 
-            ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), start_column);
+            ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), startColumn);
 
             if(!server.legalMoves(activeGameID, start)){
                 System.out.println("No legal moves for selected piece!");
