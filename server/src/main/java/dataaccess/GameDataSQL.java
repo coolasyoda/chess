@@ -139,24 +139,15 @@ public class GameDataSQL extends GameDataAccess{
                     if (rs.next()) {
                         ChessGame game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
 
-                        try{
-                            game.makeMove(move);
-                            System.out.println(game.getBoard().boardToString(true));
-
-                        }
-                        catch (InvalidMoveException moveException){
-                            System.out.println("INVALID MOVE");
-                            return null;
-                        }
-
+                        game.makeMove(move);
+                        System.out.println(game.getBoard().boardToString(true));
 
                         // Update the game in the database
                         String update = "UPDATE games SET game=? WHERE gameID=?";
-                        try (var updatePs = conn.prepareStatement(update)) {
-                            updatePs.setString(1, new Gson().toJson(game));
-                            updatePs.setInt(2, gameID);
-                            updatePs.executeUpdate();
-                        }
+                        var updatePs = conn.prepareStatement(update);
+                        updatePs.setString(1, new Gson().toJson(game));
+                        updatePs.setInt(2, gameID);
+                        updatePs.executeUpdate();
 
                         return game;
                     } else {
@@ -166,7 +157,10 @@ public class GameDataSQL extends GameDataAccess{
             }
         } catch (SQLException | DataAccessException e ) {
             System.out.println("MOVE CATCH");
-
+            return null;
+        }
+        catch (InvalidMoveException moveException){
+            System.out.println("INVALID MOVE");
             return null;
         }
     }

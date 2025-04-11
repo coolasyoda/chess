@@ -76,13 +76,6 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
-//        System.out.println("START: ROW:" + move.getStartPosition().getRow());
-//        System.out.println("START: COLUMN:" + move.getStartPosition().getColumn());
-//        System.out.println("END: ROW:" + move.getEndPosition().getRow());
-//        System.out.println("END: COLUMN:" + move.getEndPosition().getColumn());
-//        System.out.println("Before:");
-//        System.out.println(board.toString(true));
-
         //No piece moved exception
         if(board.getPiece(move.getStartPosition()) == null){
             throw new InvalidMoveException("NO PIECE MOVED");

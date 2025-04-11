@@ -84,58 +84,8 @@ public class PrintBoard {
                 }
             }
             toggle = !toggle;
-            switch (chessBoard.charAt(i)) {
-                case ' ' -> boardString.append(EMPTY);
-                case 'R' -> {
-                    boardString.append(SET_TEXT_COLOR_WHITE); boardString.append(BLACK_ROOK);
-                }
-                case 'N' -> {
-                    boardString.append(SET_TEXT_COLOR_WHITE); boardString.append(BLACK_KNIGHT);
-                }
-                case 'B' -> {
-                    boardString.append(SET_TEXT_COLOR_WHITE); boardString.append(BLACK_BISHOP);
-                }
-                case 'Q' -> {
-                    boardString.append(SET_TEXT_COLOR_WHITE); boardString.append(BLACK_QUEEN);
-                }
-                case 'K' -> {
-                    boardString.append(SET_TEXT_COLOR_WHITE); boardString.append(BLACK_KING);
-                }
-                case 'P' -> {
-                    boardString.append(SET_TEXT_COLOR_WHITE); boardString.append(BLACK_PAWN);
-                }
-                case 'r' -> {
-                    boardString.append(SET_TEXT_COLOR_BLACK); boardString.append(BLACK_ROOK);
-                }
-                case 'n' -> {
-                    boardString.append(SET_TEXT_COLOR_BLACK); boardString.append(BLACK_KNIGHT);
-                }
-                case 'b' -> {
-                    boardString.append(SET_TEXT_COLOR_BLACK); boardString.append(BLACK_BISHOP);
-                }
-                case 'q' -> {
-                    boardString.append(SET_TEXT_COLOR_BLACK); boardString.append(BLACK_QUEEN);
-                }
-                case 'k' -> {
-                    boardString.append(SET_TEXT_COLOR_BLACK); boardString.append(BLACK_KING);
-                }
-                case 'p' -> {
-                    boardString.append(SET_TEXT_COLOR_BLACK); boardString.append(BLACK_PAWN);
-                }
-                case '\n' -> {
-                    boardString.append(SET_TEXT_COLOR_BLACK);
-                    boardString.append(SET_BG_COLOR_LIGHT_GREY);
-                    if(white){
-                        boardString.append("\u2003").append(8 - (i/9)).append("\u2003");
-                    }
-                    else{
-                        boardString.append("\u2003").append((i / 9) + 1).append("\u2003");
-                    }
-                    boardString.append(RESET_BG_COLOR);
-                    boardString.append("\n");
 
-                }
-            }
+            boardString.append(getPiece(chessBoard.charAt(i), i, white));
 
         }
         boardString.append(SET_BG_COLOR_LIGHT_GREY);
@@ -150,6 +100,64 @@ public class PrintBoard {
         boardString.append(RESET_TEXT_COLOR);
         boardString.append("\n");
         System.out.println(boardString);
+    }
+
+    private String getPiece(char piece, int i, boolean white){
+        switch (piece) {
+            case ' ' -> {
+                return EMPTY;
+            }
+            case 'R' -> {
+                return SET_TEXT_COLOR_WHITE + BLACK_ROOK;
+            }
+            case 'N' -> {
+                return SET_TEXT_COLOR_WHITE + BLACK_KNIGHT;
+            }
+            case 'B' -> {
+                return SET_TEXT_COLOR_WHITE + BLACK_BISHOP;
+            }
+            case 'Q' -> {
+                return SET_TEXT_COLOR_WHITE + BLACK_QUEEN;
+            }
+            case 'K' -> {
+                return SET_TEXT_COLOR_WHITE + BLACK_KING;
+            }
+            case 'P' -> {
+                return SET_TEXT_COLOR_WHITE + BLACK_PAWN;
+            }
+            case 'r' -> {
+                return SET_TEXT_COLOR_BLACK + BLACK_ROOK;
+            }
+            case 'n' -> {
+                return SET_TEXT_COLOR_BLACK + BLACK_KNIGHT;
+            }
+            case 'b' -> {
+                return SET_TEXT_COLOR_BLACK + BLACK_BISHOP;
+            }
+            case 'q' -> {
+                return SET_TEXT_COLOR_BLACK + BLACK_QUEEN;
+            }
+            case 'k' -> {
+                return SET_TEXT_COLOR_BLACK + BLACK_KING;
+            }
+            case 'p' -> {
+                return SET_TEXT_COLOR_BLACK + BLACK_PAWN;
+            }
+            case '\n'-> {
+                String newLine = SET_TEXT_COLOR_BLACK + SET_BG_COLOR_LIGHT_GREY;
+                if(white){
+                    newLine = newLine + ("\u2003") + (8 - (i/9)) + ("\u2003");
+                }
+                else{
+                    newLine = newLine+ ("\u2003") + ((i / 9) + 1) + ("\u2003");
+                }
+                newLine = newLine + RESET_BG_COLOR + "\n";
+                return newLine;
+            }
+            default -> {
+                return EMPTY;
+            }
+        }
     }
 
 
