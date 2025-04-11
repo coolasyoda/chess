@@ -83,7 +83,8 @@ public class ChessBoard {
         squares = board;
     }
 
-    public String toString(boolean white){
+
+    public String boardToString(boolean white){
 
         StringBuilder boardString = new StringBuilder();
 

@@ -1,10 +1,14 @@
 package client.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import exception.ResponseException;
+import ui.PrintBoard;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -47,7 +51,12 @@ public class WebsocketFacade extends Endpoint {
         }
 
         if(Objects.equals(jsonObject.get("serverMessageType").getAsString(), "LOAD_GAME")){
-            System.out.println("NOTIFICATION: " + jsonObject.get("message").getAsString());
+            LoadGameMessage gameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+
+            ChessGame game = gameMessage.getGame();
+            PrintBoard board = new PrintBoard(game, null);
+            board.printBoard(true);
+
         }
 
         System.out.println("messageHandle: " + message);

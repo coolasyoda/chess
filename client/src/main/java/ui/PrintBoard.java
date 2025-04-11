@@ -30,7 +30,7 @@ public class PrintBoard {
     public void printBoard(boolean white){
 
         boolean toggle = true;
-        String chessBoard = game.getBoard().toString(white);
+        String chessBoard = game.getBoard().boardToString(white);
         StringBuilder boardString = new StringBuilder();
         int chessLength = chessBoard.length();
         boardString.append(SET_BG_COLOR_LIGHT_GREY);

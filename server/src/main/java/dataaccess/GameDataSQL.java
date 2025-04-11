@@ -141,7 +141,7 @@ public class GameDataSQL extends GameDataAccess{
 
                         try{
                             game.makeMove(move);
-                            System.out.println(game.getBoard().toString(true));
+                            System.out.println(game.getBoard().boardToString(true));
 
                         }
                         catch (InvalidMoveException moveException){

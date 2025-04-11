@@ -1,28 +1,36 @@
 package server.websocket;
 
+import chess.ChessGame;
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
-import dataaccess.AuthDataAccess;
-import dataaccess.AuthDataSQL;
+import dataaccess.*;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dataaccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.Session;
 import server.Server;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
+import chess.ChessGame;
+import chess.ChessBoard;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 
 @WebSocket
 public class WebSocketHandler {
+
+    static Map<Session, Integer> gameSessions = new HashMap<>();
 
     @OnWebSocketConnect
     public void onConnect(Session session) throws Exception {
@@ -69,7 +77,9 @@ public class WebSocketHandler {
 
             String message = authDataAccess.validAuthToken(authToken) + " has joined game " + gameID + " as " + player;
 
-            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
+            broadcastMessage(session, gameID, message);
+            gameSessions.put(session, gameID);
+
         }
         catch (DataAccessException | IOException e){
             System.out.println("Couldn't retrieve username");
@@ -88,12 +98,16 @@ public class WebSocketHandler {
 
             String message = authDataAccess.validAuthToken(authToken) + " made move " + move + " in game " + gameID;
 
-            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
-//            session.getRemote().sendString(new Gson().toJson(new LoadGameMessage()));
+            ChessGame game = Server.getGameDataAccess().getGame(gameID);
+//            System.out.println("GAME: ");
+//            System.out.println(game.getBoard().boardToString(true));
+
+            broadcastMessage(session, gameID, message);
+            broadcastGame(session, gameID, game);
 
         }
         catch (DataAccessException | IOException e){
-            System.out.println("Couldn't retrieve username");
+            System.out.println("Couldn't retrieve username: " + e);
         }
     }
 
@@ -104,7 +118,7 @@ public class WebSocketHandler {
 
             String message = authDataAccess.validAuthToken(authToken) + " has left game " + gameID;
 
-            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
+            broadcastMessage(session, gameID, message);
         }
         catch (DataAccessException | IOException e){
             System.out.println("Couldn't retrieve username");
@@ -118,14 +132,33 @@ public class WebSocketHandler {
 
             String message = authDataAccess.validAuthToken(authToken) + " has resigned game " + gameID + "!";
 
-            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
+            broadcastMessage(session, gameID, message);
         }
         catch (DataAccessException | IOException e){
             System.out.println("Couldn't retrieve username");
         }
     }
 
+    public void broadcastMessage(Session session, Integer gameID, String message) throws IOException {
+        System.out.println("BROADCASTING MESSAGE: " + message);
+        for (Session gameSession : gameSessions.keySet()) {
+            if(Objects.equals(gameSessions.get(gameSession), gameID)){
+                if(session != gameSession){
+                    gameSession.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
+                }
+            }
+        }
+    }
 
-
+    public void broadcastGame(Session session, Integer gameID, ChessGame game) throws IOException {
+        System.out.println("BROADCASTING GAME");
+        for (Session gameSession : gameSessions.keySet()) {
+            if(Objects.equals(gameSessions.get(gameSession), gameID)){
+                if(session != gameSession){
+                    gameSession.getRemote().sendString(new Gson().toJson(new LoadGameMessage(game)));
+                }
+            }
+        }
+    }
 
 }

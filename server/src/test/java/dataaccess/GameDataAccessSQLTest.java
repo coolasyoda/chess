@@ -90,7 +90,7 @@ public class GameDataAccessSQLTest {
 
         gameDataAccess.joinGame(newGame.gameID(), "user1", "WHITE");
         newGame = gameDataAccess.joinGame(newGame.gameID(), "user2", "BLACK");
-        System.out.println(newGame.chessGame().getBoard().toString(true));
+        System.out.println(newGame.chessGame().getBoard().boardToString(true));
 
         ChessMove move = new ChessMove(new ChessPosition(2, 1), new ChessPosition(3, 1), null);
 

@@ -80,8 +80,8 @@ public class ChessGame {
 //        System.out.println("START: COLUMN:" + move.getStartPosition().getColumn());
 //        System.out.println("END: ROW:" + move.getEndPosition().getRow());
 //        System.out.println("END: COLUMN:" + move.getEndPosition().getColumn());
-        System.out.println("Before:");
-        System.out.println(board.toString(true));
+//        System.out.println("Before:");
+//        System.out.println(board.toString(true));
 
         //No piece moved exception
         if(board.getPiece(move.getStartPosition()) == null){
@@ -105,8 +105,8 @@ public class ChessGame {
                     teamTurn = TeamColor.WHITE;
                 }
 
-                System.out.println("After:");
-                System.out.println(board.toString(true));
+//                System.out.println("After:");
+//                System.out.println(board.toString(true));
 
                 return;
 

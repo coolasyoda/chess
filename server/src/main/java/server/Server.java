@@ -6,6 +6,11 @@ import service.GameService;
 import service.UserService;
 import spark.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Server {
 
     UserHandler userHandler;
@@ -15,8 +20,7 @@ public class Server {
 
     UserDataAccess userDataAccess;
     AuthDataAccess authDataAccess;
-    GameDataAccess gameDataAccess;
-
+    static GameDataAccess gameDataAccess;
 
     public Server(){
         UserService userService;
@@ -69,6 +73,10 @@ public class Server {
         Spark.awaitInitialization();
         return Spark.port();
 
+    }
+
+    public static GameDataAccess getGameDataAccess(){
+        return gameDataAccess;
     }
 
     public int port(){
