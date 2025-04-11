@@ -253,7 +253,7 @@ public class ServerFacade {
             return false;
         }
 
-        boolean black = false;
+        boolean black;
         int isInGame = isInGameAsBlack(gameID);
 
         if(isInGame == -1){
@@ -286,8 +286,6 @@ public class ServerFacade {
             System.out.println("Could not retrieve game!");
             return false;
         }
-
-
 
         path = "/game/move";
 
@@ -325,19 +323,8 @@ public class ServerFacade {
             PrintBoard board = new PrintBoard(game, null);
             board.printBoard(!black);
 
-//            if(game.isInCheck(oppositeColor)){
-//                System.out.println("You placed " + oppositeColor.toString() + " in checkmate!");
-//            }
-//            else if(game.isInCheckmate(oppositeColor)){
-//                System.out.println("You placed " + oppositeColor.toString() + " in check!");
-//            }
-//            else if(game.isInStalemate(oppositeColor)){
-//                System.out.println("You placed " + oppositeColor.toString() + " in stalemate!");
-//            }
-
             MakeMoveCommand command = new MakeMoveCommand(authToken, (Integer) gameID, move);
             ws.sendCommand(new Gson().toJson(command));
-
 
             return true;
         }
@@ -377,41 +364,29 @@ public class ServerFacade {
     }
 
     public void legalMoves(Integer gameID, ChessPosition startPosition){
-
         var maxGames = joinedGames.size();
-
         if(maxGames == 0 || gameID >= maxGames + 1 || gameID == 0){
             System.out.println("Could not retrieve legal moves");
             return;
         }
-
         var realGameID = games.get(gameID-1).get("gameID");
-
         Map<String, Object> request = new HashMap<>();
         request.put("gameID", gameID);
-
         boolean black = false;
         int isInGame = isInGameAsBlack(Integer.valueOf(gameID));
-
         black = (isInGame == 1);
-
-
         var path = "/game/single";
         try {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
-
             if(game.isOver()){
                 System.out.println("Game is over");
                 return;
             }
-
             Collection<ChessMove> moves = game.validMoves(startPosition);
-
             if(moves.isEmpty()){
                 System.out.println("No legal moves for selected piece");
                 return;
             }
-
             PrintBoard board = new PrintBoard(game, moves);
             board.printBoard(!black);
         }
@@ -419,22 +394,17 @@ public class ServerFacade {
             System.out.println("LEGAL MOVES CATCH");
         }
     }
-
     public boolean resignFacade(Integer gameID){
         var path = "/game/resign";
-
         Map<String, Object> request = new HashMap<>();
         request.put("gameID", gameID);
-
         try {
             if(!this.makeRequest("PUT", path, request, boolean.class)){
                 System.out.println("Resign Failed!");
                 return false;
             }
-
             ResignCommand command = new ResignCommand(authToken, gameID);
             ws.sendCommand(new Gson().toJson(command));
-
             return true;
         }
         catch (ResponseException responseException){
@@ -442,14 +412,12 @@ public class ServerFacade {
             return false;
         }
     }
-
     public boolean leaveFacade(Integer gameID){
         LeaveCommand command = new LeaveCommand(authToken, gameID);
         ws.sendCommand(new Gson().toJson(command));
         ws.setColor(true);
         return true;
     }
-
     public boolean wsConnect(String serverURL){
         try{
             ws = new WebsocketFacade(serverURL);
@@ -460,12 +428,8 @@ public class ServerFacade {
             return false;
         }
     }
-
-
     private int isInGameAsBlack(Integer gameID){
-
         Map<String, Object> gameToMove = (Map<String, Object>) joinedGames.get(gameID);
-
         assert gameToMove != null;
         if(Objects.equals((String) gameToMove.get("whiteUsername"), userUsername)){
             return 0;
@@ -476,25 +440,18 @@ public class ServerFacade {
         else{
             return -1;
         }
-
     }
-
-
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverURL + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
-
             if (authToken != null) {
                 http.setRequestProperty("authorization", authToken);
             }
-
             writeBody(request, http);
             http.connect();
-
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (ResponseException ex) {
@@ -503,8 +460,6 @@ public class ServerFacade {
             throw new ResponseException(500, ex.getMessage());
         }
     }
-
-
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
             String reqData = new Gson().toJson(request);
@@ -513,7 +468,6 @@ public class ServerFacade {
             }
         }
     }
-
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
@@ -522,11 +476,9 @@ public class ServerFacade {
                     throw ResponseException.fromJson(respErr);
                 }
             }
-
             throw new ResponseException(status, "other failure: " + status);
         }
     }
-
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         T response = null;
         if (http.getContentLength() < 0) {
@@ -539,10 +491,8 @@ public class ServerFacade {
         }
         return response;
     }
-
-
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
-
 }
+//500 lines is the limit, which is why there is little whitespace legalMoves onward :(
