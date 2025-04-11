@@ -60,14 +60,15 @@ public class ChessGame {
         ArrayList<ChessMove> possibleMoves = new ChessMoveCalculator().pieceMoves(getBoard(), startPosition);
         ArrayList<ChessMove> goodMoves = new ArrayList<>();
 
+
         for(int i=0; i<possibleMoves.size(); i++){
             if(tryMove(possibleMoves.get(i))){
                 goodMoves.add(possibleMoves.get(i));
             }
         }
 
-        if(goodMoves.isEmpty()){
-            isOver = true;
+        if(isOver){
+            return null;
         }
 
         return goodMoves;
@@ -92,6 +93,11 @@ public class ChessGame {
         }
 
         ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) validMoves(move.getStartPosition());
+        if(validMoves == null){
+            System.out.println("GAME IS OVER");
+            return;
+        }
+
         for(int i=0; i<validMoves.size(); i++){
             if(validMoves.get(i).equals(move) && tryMove(move)){
                 movePiece(move);
@@ -267,6 +273,14 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public void setIsOver(boolean isOver){
+        this.isOver = isOver;
     }
 
     @Override

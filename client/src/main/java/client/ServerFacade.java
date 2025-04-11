@@ -381,14 +381,28 @@ public class ServerFacade {
     }
 
     public boolean resignFacade(Integer gameID){
-        System.out.println("RESIGN FACADE");
+        var path = "/game/resign";
 
+        Map<String, Object> request = new HashMap<>();
+        request.put("gameID", gameID);
 
-        ResignCommand command = new ResignCommand(authToken, gameID);
-        ws.sendCommand(new Gson().toJson(command));
+        try {
+            if(!this.makeRequest("PUT", path, request, boolean.class)){
+                System.out.println("Resign Failed!");
+                return false;
+            }
 
+            ResignCommand command = new ResignCommand(authToken, gameID);
+            ws.sendCommand(new Gson().toJson(command));
 
-        return false;
+            System.out.println("Successfully Resigned!");
+
+            return true;
+        }
+        catch (ResponseException responseException){
+            System.out.println("RESIGN CATCH");
+            return false;
+        }
     }
 
     public boolean leaveFacade(Integer gameID){

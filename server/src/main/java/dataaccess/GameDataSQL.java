@@ -142,6 +142,11 @@ public class GameDataSQL extends GameDataAccess{
                         ChessGame game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
 
                         game.makeMove(move);
+
+//                        if(game.isInCheckmate() )
+//                        game.getTeamTurn()
+
+
                         System.out.println(game.getBoard().boardToString(true));
 
                         // Update the game in the database
@@ -188,10 +193,36 @@ public class GameDataSQL extends GameDataAccess{
     }
 
     public boolean resign(int gameID, String username) {
-
         System.out.println("SQL RESIGN");
 
-        return false;
+        ChessGame game = getGame(gameID);
+        game.setIsOver(true);
+
+        try (var conn = DatabaseManager.getConnection()) {
+            String query = "SELECT gameID, game FROM games WHERE gameID=?";
+            try (var ps = conn.prepareStatement(query)) {
+                ps.setInt(1, gameID);
+
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+
+                        // Update the game in the database
+                        String update = "UPDATE games SET game=? WHERE gameID=?";
+                        var updatePs = conn.prepareStatement(update);
+                        updatePs.setString(1, new Gson().toJson(game));
+                        updatePs.setInt(2, gameID);
+                        updatePs.executeUpdate();
+
+                        return true;
+                    } else {
+                        throw new DataAccessException("Game not found");
+                    }
+                }
+            }
+        } catch (SQLException | DataAccessException e ) {
+            System.out.println("Resign Failed SQL");
+            return false;
+        }
     }
 
     public void clear(){

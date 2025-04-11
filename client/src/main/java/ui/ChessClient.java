@@ -252,12 +252,14 @@ public class ChessClient {
         var params = Arrays.copyOfRange(tokens, 0, tokens.length);
 
         if(params.length == 1 && Objects.equals(params[0], "yes")){
-            server.resignFacade(activeGameID);
+            if(!server.resignFacade(activeGameID)){
+                System.out.println("Resign failed, please try again");
+                return 0;
+            }
             System.out.println("Successfully resigned");
             return 1;
         }
         System.out.println("Resign cancelled");
-
 
         return 0;
     }

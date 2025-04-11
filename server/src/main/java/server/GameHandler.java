@@ -193,9 +193,6 @@ public class GameHandler {
 
         int gameID = gameRequest.get("gameID").getAsInt();
 
-        gameService.resign(gameID, authToken);
-
-
-        return null;
+        return gameService.resign(gameID, authToken);
     }
 }
