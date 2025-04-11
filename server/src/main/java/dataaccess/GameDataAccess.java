@@ -101,4 +101,9 @@ public class GameDataAccess {
         System.out.println("getGame only implemented in SQL");
         return null;
     }
+
+    public boolean resign(int gameID, String username) {
+        System.out.println("resign only implemented in SQL");
+        return false;
+    }
 }

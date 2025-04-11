@@ -15,6 +15,7 @@ public class ChessGame {
 
     ChessBoard board;
     TeamColor teamTurn = TeamColor.WHITE;
+    boolean isOver = false;
 
     public ChessGame() {
         board = new ChessBoard();
@@ -63,6 +64,10 @@ public class ChessGame {
             if(tryMove(possibleMoves.get(i))){
                 goodMoves.add(possibleMoves.get(i));
             }
+        }
+
+        if(goodMoves.isEmpty()){
+            isOver = true;
         }
 
         return goodMoves;

@@ -53,4 +53,8 @@ public class GameService {
         return gameDataAccess.getGame(gameID);
     }
 
+    public boolean resign(int gameID, String authToken) throws DataAccessException {
+        System.out.println("Service resign");
+        return gameDataAccess.resign(gameID, validateUser(authToken));
+    }
 }

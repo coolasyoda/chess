@@ -7,10 +7,7 @@ import client.websocket.WebsocketFacade;
 import com.google.gson.Gson;
 import ui.PrintBoard;
 import exception.ResponseException;
-import websocket.commands.ConnectCommand;
-import websocket.commands.LeaveCommand;
-import websocket.commands.MakeMoveCommand;
-import websocket.commands.UserGameCommand;
+import websocket.commands.*;
 
 import java.io.*;
 import java.net.*;
@@ -378,13 +375,19 @@ public class ServerFacade {
             return true;
         }
         catch (ResponseException responseException){
-            System.out.println("CATCH");
+            System.out.println("LEGAL MOVES CATCH");
             return false;
         }
     }
 
     public boolean resignFacade(Integer gameID){
         System.out.println("RESIGN FACADE");
+
+
+        ResignCommand command = new ResignCommand(authToken, gameID);
+        ws.sendCommand(new Gson().toJson(command));
+
+
         return false;
     }
 

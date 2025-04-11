@@ -3,6 +3,8 @@ package dataaccess;
 import chess.*;
 import com.google.gson.Gson;
 import model.GameData;
+import spark.Request;
+import spark.Response;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -183,6 +185,13 @@ public class GameDataSQL extends GameDataAccess{
             System.out.println("GET GAME CATCH");
             return null;
         }
+    }
+
+    public boolean resign(int gameID, String username) {
+
+        System.out.println("SQL RESIGN");
+
+        return false;
     }
 
     public void clear(){

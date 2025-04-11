@@ -15,6 +15,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import server.Server;
 import websocket.commands.LeaveCommand;
 import websocket.commands.MakeMoveCommand;
+import websocket.commands.ResignCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -66,7 +67,7 @@ public class WebSocketHandler {
                 leave(session, new Gson().fromJson(message, LeaveCommand.class));
             }
             case "RESIGN" -> {
-                resign(session, jsonObject.get("gameID").getAsInt(), jsonObject.get("authToken").getAsString());
+                resign(session, new Gson().fromJson(message, ResignCommand.class));
             }
         }
     }
@@ -133,7 +134,10 @@ public class WebSocketHandler {
         }
     }
 
-    private void resign(Session session, int gameID, String authToken){
+    private void resign(Session session, ResignCommand command){
+        String authToken = command.getAuthToken();
+        int gameID = command.getGameID();
+
         AuthDataAccess authDataAccess = new AuthDataSQL();
         try {
             System.out.println("RESIGN: " + authDataAccess.validAuthToken(authToken));

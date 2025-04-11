@@ -162,8 +162,6 @@ public class GameHandler {
             return GSON.toJson(Map.of("message", "Error: unauthorized"));
         }
 
-        System.out.println("RAW REQUEST: " + request.body());
-
         JsonObject gameRequest = GSON.fromJson(request.body(), JsonObject.class);
 
         int gameID = gameRequest.get("gameID").getAsInt();
@@ -175,11 +173,29 @@ public class GameHandler {
             return GSON.toJson(Map.of("message", "Error: couldn't retrieve game"));
         }
 
-        System.out.println(game.toString());
-
         response.status(200);
         return GSON.toJson(game);
     }
 
 
+    public Object resign(Request request, Response response) throws DataAccessException {
+        String authToken = request.headers("authorization");
+        System.out.println("RESIGNING!");
+
+        if(gameService.validateUser(authToken) == null){
+            response.status(401);
+            return GSON.toJson(Map.of("message", "Error: unauthorized"));
+        }
+
+        System.out.println("RAW REQUEST: " + request.body());
+
+        JsonObject gameRequest = GSON.fromJson(request.body(), JsonObject.class);
+
+        int gameID = gameRequest.get("gameID").getAsInt();
+
+        gameService.resign(gameID, authToken);
+
+
+        return null;
+    }
 }
