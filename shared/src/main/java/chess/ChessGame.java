@@ -239,16 +239,15 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if(isInCheck(teamColor)){
+        if (isInCheck(teamColor)) {
             return false;
         }
         ChessPosition testPosition;
-        for(int i=1; i<=8; i++){
-            for(int j=1; j<=8; j++){
-                testPosition = new ChessPosition(i,j);
-                if(board.getPiece(testPosition) != null && board.getPiece(testPosition).getTeamColor() == teamColor){
-                    Collection<ChessMove> moves = validMoves(testPosition);
-                    if(moves != null && moves.isEmpty()){
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                testPosition = new ChessPosition(i, j);
+                if (board.getPiece(testPosition) != null && board.getPiece(testPosition).getTeamColor() == teamColor) {
+                    if (validMoves(testPosition).size() != 0) {
                         return false;
                     }
                 }
@@ -257,11 +256,12 @@ public class ChessGame {
         return true;
     }
 
-    /**
-     * Sets this game's chessboard with a given board
-     *
-     * @param board the new board to use
-     */
+
+        /**
+         * Sets this game's chessboard with a given board
+         *
+         * @param board the new board to use
+         */
     public void setBoard(ChessBoard board) {
         this.board = board;
         isOver = false;
