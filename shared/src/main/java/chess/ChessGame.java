@@ -20,6 +20,7 @@ public class ChessGame {
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
+        isOver = false;
     }
 
     /**
@@ -60,15 +61,10 @@ public class ChessGame {
         ArrayList<ChessMove> possibleMoves = new ChessMoveCalculator().pieceMoves(getBoard(), startPosition);
         ArrayList<ChessMove> goodMoves = new ArrayList<>();
 
-
         for(int i=0; i<possibleMoves.size(); i++){
             if(tryMove(possibleMoves.get(i))){
                 goodMoves.add(possibleMoves.get(i));
             }
-        }
-
-        if(isOver){
-            return null;
         }
 
         return goodMoves;
@@ -99,6 +95,7 @@ public class ChessGame {
         }
 
         for(int i=0; i<validMoves.size(); i++){
+            validMoves.get(i).toString();
             if(validMoves.get(i).equals(move) && tryMove(move)){
                 movePiece(move);
 
@@ -267,6 +264,7 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board = board;
+        isOver = false;
     }
 
     /**
@@ -292,11 +290,11 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
+        return isOver == chessGame.isOver && Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, teamTurn);
+        return Objects.hash(board, teamTurn, isOver);
     }
 }
