@@ -109,8 +109,9 @@ public class ChessGame {
                     teamTurn = TeamColor.WHITE;
                 }
 
-//                System.out.println("After:");
-//                System.out.println(board.toString(true));
+                if(isInStalemate(teamTurn) || isInCheckmate(teamTurn)){
+                    isOver = true;
+                }
 
                 return;
 
@@ -223,7 +224,8 @@ public class ChessGame {
             for(int j=1; j<=8; j++){
                 testPosition = new ChessPosition(i,j);
                 if(board.getPiece(testPosition) != null && board.getPiece(testPosition).getTeamColor().equals(teamColor)){
-                    if(!(validMoves(testPosition).isEmpty())){
+                    Collection<ChessMove> moves = validMoves(testPosition);
+                    if(moves != null && !moves.isEmpty()){
                         return false;
                     }
                 }
@@ -248,7 +250,8 @@ public class ChessGame {
             for(int j=1; j<=8; j++){
                 testPosition = new ChessPosition(i,j);
                 if(board.getPiece(testPosition) != null && board.getPiece(testPosition).getTeamColor() == teamColor){
-                    if(validMoves(testPosition).size() != 0){
+                    Collection<ChessMove> moves = validMoves(testPosition);
+                    if(moves != null && moves.isEmpty()){
                         return false;
                     }
                 }
@@ -279,8 +282,8 @@ public class ChessGame {
         return isOver;
     }
 
-    public void setIsOver(boolean isOver){
-        this.isOver = isOver;
+    public void setIsOver(){
+        isOver = true;
     }
 
     @Override

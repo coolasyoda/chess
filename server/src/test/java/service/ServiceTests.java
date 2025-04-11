@@ -52,6 +52,11 @@ public class ServiceTests {
     }
 
     @Test
+    public void clear(){
+        //CLEARS DATABASE :)
+    }
+
+    @Test
     public void posTestRegisterUser() throws DataAccessException {
         UserData userData = new UserData("testUser", "testPassword", "");
         Assertions.assertNotNull(userService.registerUser(userData), "Register Failed");

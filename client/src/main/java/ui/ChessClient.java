@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import client.ServerFacade;
 
@@ -178,6 +179,7 @@ public class ChessClient {
             }
             state = State.GAMEPLAY;
             activeGameID = Integer.parseInt(params[0]);
+            help();
             return 1;
         }
 
@@ -203,7 +205,7 @@ public class ChessClient {
     }
 
     public int move(String... params){
-        if(params.length == 2){
+        if(params.length == 2 || params.length == 3){
 
             if(params[0].length() > 2 || params[1].length() > 2){
                 System.out.println("Please enter valid positions (A8, b4, etc)");
@@ -231,7 +233,22 @@ public class ChessClient {
             ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), startColumn);
             ChessPosition end = new ChessPosition(Integer.parseInt(String.valueOf(params[1].charAt(1))), endColumn);
 
-            ChessMove move = new ChessMove(start, end, null);
+            ChessPiece.PieceType piece = ChessPiece.PieceType.QUEEN;
+            if(params.length == 3){
+                String promotionPiece = params[2];
+                if(Objects.equals(promotionPiece, "knight")){
+                    piece = ChessPiece.PieceType.KNIGHT;
+                }
+                else if(Objects.equals(promotionPiece, "bishop")){
+                    piece = ChessPiece.PieceType.BISHOP;
+                }
+                else if(Objects.equals(promotionPiece, "rook")){
+                    piece = ChessPiece.PieceType.ROOK;
+                }
+            }
+
+
+            ChessMove move = new ChessMove(start, end, piece);
             if(!server.moveFacade(activeGameID, move)){
                 return 0;
             }
@@ -256,7 +273,7 @@ public class ChessClient {
                 System.out.println("Resign failed, please try again");
                 return 0;
             }
-            System.out.println("Successfully resigned");
+            System.out.println("Successfully Resigned");
             return 1;
         }
         System.out.println("Resign cancelled");
@@ -285,9 +302,7 @@ public class ChessClient {
 
             ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), startColumn);
 
-            if(!server.legalMoves(activeGameID, start)){
-                System.out.println("No legal moves for selected piece!");
-            }
+            server.legalMoves(activeGameID, start);
 
             return 1;
         }

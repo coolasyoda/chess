@@ -88,6 +88,7 @@ public class ServerFacade {
             // DO NOT UNDO WEIRD CASTING!
             Integer gameID = ((Number) response.get("gameID")).intValue();
             System.out.println("Created " + gameName + " with ID: " + gameID);
+            listFacade(false);
             return gameID;
         }
         catch (ResponseException responseException){
@@ -111,6 +112,11 @@ public class ServerFacade {
             return false;
         }
 
+        listFacade(false);
+        if(joinedGames.isEmpty()){
+            System.out.println("There are no games to join!");
+            return false;
+        }
         Map<String, Object> gameToMove = (Map<String, Object>) joinedGames.get(gameID);
 
         // Already in game
@@ -120,8 +126,8 @@ public class ServerFacade {
 
             if(Objects.equals((String) gameToMove.get("blackUsername"), userUsername)){
                 ws.setColor(false);
-
             }
+
             redrawFacade((Integer) gameID);
 
             UserGameCommand command = new ConnectCommand(authToken, (Integer) gameID, color);
@@ -140,9 +146,23 @@ public class ServerFacade {
         try {
             makeRequest("PUT", path, request, null);
             System.out.println("Joined Game "+ gameID);
-            ChessGame game = new ChessGame();
+
+            UserGameCommand command = new ConnectCommand(authToken, (Integer) gameID, color);
+            ws.sendCommand(new Gson().toJson(command));
+
+            request.clear();
+            request.put("gameID", gameID);
+            path = "/game/single";
+
+            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
             PrintBoard board = new PrintBoard(game, null);
             board.printBoard(playerType);
+            listFacade(false);
+
+            if(!playerType){
+                ws.setColor(false);
+            }
+
             return true;
         }
         catch (ResponseException responseException){
@@ -150,8 +170,11 @@ public class ServerFacade {
         }
     }
 
-
     public boolean listFacade(){
+        return listFacade(true);
+    }
+
+    private boolean listFacade(boolean print){
         var path = "/game";
         try {
             Map response = this.makeRequest("GET", path, null, Map.class);
@@ -164,16 +187,19 @@ public class ServerFacade {
             for (Map<String, Object> game : games) {
 
                 int readGameID = ((Number) game.get("gameID")).intValue();
-                String whiteUsername = (String) game.get("whiteUsername");
-                String blackUsername = (String) game.get("blackUsername");
-                String gameName = (String) game.get("gameName");
+
+                if(print){
+                    String whiteUsername = (String) game.get("whiteUsername");
+                    String blackUsername = (String) game.get("blackUsername");
+                    String gameName = (String) game.get("gameName");
+
+                    System.out.println("Game ID: " + gameID + ", Name: " + gameName);
+                    System.out.println("White Username: " + (whiteUsername != null ? whiteUsername : "AVAILABLE"));
+                    System.out.println("Black Username: " + (blackUsername != null ? blackUsername : "AVAILABLE"));
+                    System.out.println();
+                }
 
                 joinedGames.put(readGameID, game);
-
-                System.out.println("Game ID: " + gameID + ", Name: " + gameName);
-                System.out.println("White Username: " + (whiteUsername != null ? whiteUsername : "AVAILABLE"));
-                System.out.println("Black Username: " + (blackUsername != null ? blackUsername : "AVAILABLE"));
-                System.out.println();
                 gameID++;
             }
 
@@ -187,6 +213,7 @@ public class ServerFacade {
 
     public boolean observeFacade(String gameID){
 
+        listFacade(false);
         var maxGames = joinedGames.size();
 
         if(maxGames == 0 || Integer.parseInt(gameID) >= maxGames + 1){
@@ -221,23 +248,20 @@ public class ServerFacade {
     public boolean moveFacade(Integer gameID, ChessMove move) {
         var maxGames = joinedGames.size();
 
-        if(maxGames == 0 || gameID >= maxGames + 1){
+        if(maxGames == 0 || gameID >= maxGames + 1 || gameID == 0 || gameID < 0){
+            System.out.println("Issue with gameID");
             return false;
         }
 
-        if(gameID == 0 || gameID < 0){
-            return false;
-        }
-
-
-        boolean white = true;
-        int isInGame = isInGameAsWhite(gameID);
+        boolean black = false;
+        int isInGame = isInGameAsBlack(gameID);
 
         if(isInGame == -1){
+            System.out.println("Cannot move piece unless joined in the game!");
             return false;
         }
         else{
-            white = (isInGame == 1);
+            black = (isInGame == 1);
         }
 
         var path = "/game/single";
@@ -245,8 +269,14 @@ public class ServerFacade {
         request.put("gameID", gameID);
         try {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
-            if( !( (game.getTeamTurn() == ChessGame.TeamColor.WHITE && white)
-                    || (game.getTeamTurn() == ChessGame.TeamColor.BLACK && !white) ) ){
+
+            if(game.isOver()){
+                System.out.println("Game is over");
+                return false;
+            }
+
+            if( !( (game.getTeamTurn() == ChessGame.TeamColor.WHITE && !black)
+                    || (game.getTeamTurn() == ChessGame.TeamColor.BLACK && black) ) ){
                 System.out.println("Please wait your turn!");
                 return false;
             }
@@ -282,16 +312,37 @@ public class ServerFacade {
         try{
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
 
+            ChessGame.TeamColor color = game.getBoard().getPiece(move.getEndPosition()).getTeamColor();
+            ChessGame.TeamColor oppositeColor = null;
+
+            if(color == ChessGame.TeamColor.WHITE){
+                oppositeColor = ChessGame.TeamColor.BLACK;
+            }
+            else {
+                oppositeColor = ChessGame.TeamColor.WHITE;
+            }
+
             PrintBoard board = new PrintBoard(game, null);
-            board.printBoard(white);
+            board.printBoard(!black);
+
+//            if(game.isInCheck(oppositeColor)){
+//                System.out.println("You placed " + oppositeColor.toString() + " in checkmate!");
+//            }
+//            else if(game.isInCheckmate(oppositeColor)){
+//                System.out.println("You placed " + oppositeColor.toString() + " in check!");
+//            }
+//            else if(game.isInStalemate(oppositeColor)){
+//                System.out.println("You placed " + oppositeColor.toString() + " in stalemate!");
+//            }
 
             MakeMoveCommand command = new MakeMoveCommand(authToken, (Integer) gameID, move);
             ws.sendCommand(new Gson().toJson(command));
 
+
             return true;
         }
         catch (ResponseException e){
-
+            System.out.println("This is not a legal move!");
         }
 
         return false;
@@ -301,11 +352,8 @@ public class ServerFacade {
 
         var maxGames = joinedGames.size();
 
-        if(maxGames == 0 || gameID >= maxGames + 1){
-            return false;
-        }
-
-        if(gameID == 0){
+        if(maxGames == 0 || gameID >= maxGames + 1 || gameID == 0){
+            System.out.println("Issue with gameID");
             return false;
         }
 
@@ -314,21 +362,13 @@ public class ServerFacade {
         Map<String, Object> request = new HashMap<>();
         request.put("gameID", gameID);
 
-        boolean white = true;
-        int isInGame = isInGameAsWhite(Integer.valueOf(gameID));
-
-        if(isInGame == -1){
-            return false;
-        }
-        else{
-            white = (isInGame == 1);
-        }
+        boolean black = (isInGameAsBlack(Integer.valueOf(gameID)) == 1);
 
         var path = "/game/single";
         try {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
             PrintBoard board = new PrintBoard(game, null);
-            board.printBoard(white);
+            board.printBoard(!black);
             return true;
         }
         catch (ResponseException responseException){
@@ -336,16 +376,13 @@ public class ServerFacade {
         }
     }
 
-    public boolean legalMoves(Integer gameID, ChessPosition startPosition){
+    public void legalMoves(Integer gameID, ChessPosition startPosition){
 
         var maxGames = joinedGames.size();
 
-        if(maxGames == 0 || gameID >= maxGames + 1){
-            return false;
-        }
-
-        if(gameID == 0){
-            return false;
+        if(maxGames == 0 || gameID >= maxGames + 1 || gameID == 0){
+            System.out.println("Could not retrieve legal moves");
+            return;
         }
 
         var realGameID = games.get(gameID-1).get("gameID");
@@ -353,30 +390,33 @@ public class ServerFacade {
         Map<String, Object> request = new HashMap<>();
         request.put("gameID", gameID);
 
-        boolean white = true;
-        int isInGame = isInGameAsWhite(Integer.valueOf(gameID));
+        boolean black = false;
+        int isInGame = isInGameAsBlack(Integer.valueOf(gameID));
 
-        white = (isInGame != 0);
+        black = (isInGame == 1);
 
 
         var path = "/game/single";
         try {
             ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
 
-            if( !( (game.getTeamTurn() == ChessGame.TeamColor.WHITE && white)
-                    || (game.getTeamTurn() == ChessGame.TeamColor.BLACK && !white) ) ){
-                System.out.println("Please wait your turn!");
-                return false;
+            if(game.isOver()){
+                System.out.println("Game is over");
+                return;
             }
 
             Collection<ChessMove> moves = game.validMoves(startPosition);
+
+            if(moves.isEmpty()){
+                System.out.println("No legal moves for selected piece");
+                return;
+            }
+
             PrintBoard board = new PrintBoard(game, moves);
-            board.printBoard(white);
-            return true;
+            board.printBoard(!black);
         }
         catch (ResponseException responseException){
             System.out.println("LEGAL MOVES CATCH");
-            return false;
         }
     }
 
@@ -394,8 +434,6 @@ public class ServerFacade {
 
             ResignCommand command = new ResignCommand(authToken, gameID);
             ws.sendCommand(new Gson().toJson(command));
-
-            System.out.println("Successfully Resigned!");
 
             return true;
         }
@@ -424,16 +462,16 @@ public class ServerFacade {
     }
 
 
-    private int isInGameAsWhite(Integer gameID){
+    private int isInGameAsBlack(Integer gameID){
 
         Map<String, Object> gameToMove = (Map<String, Object>) joinedGames.get(gameID);
 
         assert gameToMove != null;
         if(Objects.equals((String) gameToMove.get("whiteUsername"), userUsername)){
-            return 1;
+            return 0;
         }
         else if(Objects.equals((String) gameToMove.get("blackUsername"), userUsername)){
-            return 0;
+            return 1;
         }
         else{
             return -1;

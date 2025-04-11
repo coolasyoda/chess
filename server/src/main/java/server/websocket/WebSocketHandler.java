@@ -87,7 +87,7 @@ public class WebSocketHandler {
             }
 
             gameSessions.put(session, gameID);
-            broadcastMessage(session, gameID, message);
+            broadcastMessage(session, gameID, message, false);
 
         }
         catch (DataAccessException | IOException e){
@@ -109,8 +109,35 @@ public class WebSocketHandler {
 
             ChessGame game = Server.getGameDataAccess().getGame(gameID);
 
-            broadcastMessage(session, gameID, message);
             broadcastGame(session, gameID, game);
+            broadcastMessage(session, gameID, message, false);
+
+            ChessGame.TeamColor color = game.getBoard().getPiece(move.getEndPosition()).getTeamColor();
+            ChessGame.TeamColor oppositeColor = null;
+
+            if(color == ChessGame.TeamColor.WHITE){
+                oppositeColor = ChessGame.TeamColor.BLACK;
+            }
+            else {
+                oppositeColor = ChessGame.TeamColor.WHITE;
+            }
+
+            if(game.isInCheckmate(oppositeColor)){
+                message = "Checkmate! " + authDataAccess.validAuthToken(authToken) + " won game " + gameID;
+
+            }
+            else if(game.isInCheck(oppositeColor)){
+                message = "Check!";
+
+            }
+            else if(game.isInStalemate(oppositeColor)){
+                message = authDataAccess.validAuthToken(authToken) + "'s move resulted in a stalemate in game " + gameID;
+            }
+            else {
+                return;
+            }
+
+            broadcastMessage(session, gameID, message, true);
 
         }
         catch (DataAccessException | IOException e){
@@ -127,7 +154,7 @@ public class WebSocketHandler {
             System.out.println("LEAVE: " + authDataAccess.validAuthToken(authToken));
             gameSessions.put(session, 0);
             String message = authDataAccess.validAuthToken(authToken) + " has left game " + gameID;
-            broadcastMessage(session, gameID, message);
+            broadcastMessage(session, gameID, message, false);
         }
         catch (DataAccessException | IOException e){
             System.out.println("Couldn't retrieve username");
@@ -143,14 +170,14 @@ public class WebSocketHandler {
             System.out.println("RESIGN: " + authDataAccess.validAuthToken(authToken));
 
             String message = authDataAccess.validAuthToken(authToken) + " has resigned game " + gameID + "!";
-            broadcastMessage(session, gameID, message);
+            broadcastMessage(session, gameID, message, false);
         }
         catch (DataAccessException | IOException e){
             System.out.println("Couldn't retrieve username");
         }
     }
 
-    public void broadcastMessage(Session session, Integer gameID, String message) throws IOException {
+    public void broadcastMessage(Session session, Integer gameID, String message, boolean self) throws IOException {
         System.out.println("BROADCASTING MESSAGE: " + message);
         for (Session gameSession : gameSessions.keySet()) {
             if(Objects.equals(gameSessions.get(gameSession), gameID)){
@@ -158,6 +185,9 @@ public class WebSocketHandler {
                     gameSession.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
                 }
             }
+        }
+        if(self){
+            session.getRemote().sendString(new Gson().toJson(new NotificationMessage(message)));
         }
     }
 

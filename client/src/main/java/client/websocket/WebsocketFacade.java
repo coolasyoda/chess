@@ -58,9 +58,21 @@ public class WebsocketFacade extends Endpoint {
             PrintBoard board = new PrintBoard(game, null);
             board.printBoard(white);
 
+            ChessGame.TeamColor color = game.getTeamTurn();
+
+//            if(game.isInCheck(color)){
+//                System.out.println(color + " is in check!");
+//            }
+//            else if(game.isInCheckmate(color)){
+//                System.out.println(color + "has been checkmated!");
+//            }
+//            else if(game.isInStalemate(color)){
+//                System.out.println("Move resulted in stalemate!");
+//            }
+
         }
 
-        System.out.println("messageHandle: " + message);
+//        System.out.println("messageHandle: " + message);
     }
 
     public void sendCommand(String command){

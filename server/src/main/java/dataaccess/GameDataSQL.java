@@ -132,6 +132,7 @@ public class GameDataSQL extends GameDataAccess{
     }
 
     public ChessGame makeMove(Integer gameID, ChessMove move){
+
         try (var conn = DatabaseManager.getConnection()) {
             String query = "SELECT gameID, game FROM games WHERE gameID=?";
             try (var ps = conn.prepareStatement(query)) {
@@ -196,7 +197,7 @@ public class GameDataSQL extends GameDataAccess{
         System.out.println("SQL RESIGN");
 
         ChessGame game = getGame(gameID);
-        game.setIsOver(true);
+        game.setIsOver();
 
         try (var conn = DatabaseManager.getConnection()) {
             String query = "SELECT gameID, game FROM games WHERE gameID=?";
