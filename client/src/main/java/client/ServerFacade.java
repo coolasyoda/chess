@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import ui.PrintBoard;
 import exception.ResponseException;
 import websocket.commands.ConnectCommand;
+import websocket.commands.LeaveCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
@@ -119,6 +120,11 @@ public class ServerFacade {
         assert gameToMove != null;
         if(Objects.equals((String) gameToMove.get("whiteUsername"), userUsername)
                 || Objects.equals((String) gameToMove.get("blackUsername"), userUsername)){
+
+            if(Objects.equals((String) gameToMove.get("blackUsername"), userUsername)){
+                ws.setColor(false);
+
+            }
             redrawFacade((Integer) gameID);
 
             UserGameCommand command = new ConnectCommand(authToken, (Integer) gameID, color);
@@ -383,8 +389,10 @@ public class ServerFacade {
     }
 
     public boolean leaveFacade(Integer gameID){
-        System.out.println("LEAVE FACADE");
-        return false;
+        LeaveCommand command = new LeaveCommand(authToken, gameID);
+        ws.sendCommand(new Gson().toJson(command));
+        ws.setColor(true);
+        return true;
     }
 
     public boolean wsConnect(String serverURL){

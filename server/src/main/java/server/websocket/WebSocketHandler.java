@@ -13,6 +13,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
 import server.Server;
+import websocket.commands.LeaveCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
@@ -62,7 +63,7 @@ public class WebSocketHandler {
 
             }
             case "LEAVE" -> {
-                leave(session, jsonObject.get("gameID").getAsInt(), jsonObject.get("authToken").getAsString());
+                leave(session, new Gson().fromJson(message, LeaveCommand.class));
             }
             case "RESIGN" -> {
                 resign(session, jsonObject.get("gameID").getAsInt(), jsonObject.get("authToken").getAsString());
@@ -84,8 +85,8 @@ public class WebSocketHandler {
                 message = authDataAccess.validAuthToken(authToken) + " has joined game " + gameID + " as " + player;
             }
 
-            broadcastMessage(session, gameID, message);
             gameSessions.put(session, gameID);
+            broadcastMessage(session, gameID, message);
 
         }
         catch (DataAccessException | IOException e){
@@ -107,7 +108,6 @@ public class WebSocketHandler {
 
             ChessGame game = Server.getGameDataAccess().getGame(gameID);
 
-
             broadcastMessage(session, gameID, message);
             broadcastGame(session, gameID, game);
 
@@ -117,13 +117,15 @@ public class WebSocketHandler {
         }
     }
 
-    private void leave(Session session, int gameID, String authToken){
+    private void leave(Session session, LeaveCommand command){
+        int gameID = command.getGameID();
+        String authToken = command.getAuthToken();
+
         AuthDataAccess authDataAccess = new AuthDataSQL();
         try {
             System.out.println("LEAVE: " + authDataAccess.validAuthToken(authToken));
-
+            gameSessions.put(session, 0);
             String message = authDataAccess.validAuthToken(authToken) + " has left game " + gameID;
-
             broadcastMessage(session, gameID, message);
         }
         catch (DataAccessException | IOException e){
@@ -137,7 +139,6 @@ public class WebSocketHandler {
             System.out.println("RESIGN: " + authDataAccess.validAuthToken(authToken));
 
             String message = authDataAccess.validAuthToken(authToken) + " has resigned game " + gameID + "!";
-
             broadcastMessage(session, gameID, message);
         }
         catch (DataAccessException | IOException e){

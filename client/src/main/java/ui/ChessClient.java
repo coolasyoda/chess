@@ -195,11 +195,11 @@ public class ChessClient {
     }
 
     public int leave(){
-        server.leaveFacade(activeGameID);
         state = State.POSTLOGIN;
-        activeGameID = 0;
         help();
-        return 0;
+        int result = server.leaveFacade(activeGameID) ? 1 : 0;
+        activeGameID = 0;
+        return result;
     }
 
     public int move(String... params){

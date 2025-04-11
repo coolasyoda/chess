@@ -21,6 +21,7 @@ import java.util.Objects;
 public class WebsocketFacade extends Endpoint {
 
     Session session;
+    boolean white = true;
 
 
     public WebsocketFacade(String url) throws ResponseException {
@@ -55,7 +56,7 @@ public class WebsocketFacade extends Endpoint {
 
             ChessGame game = gameMessage.getGame();
             PrintBoard board = new PrintBoard(game, null);
-            board.printBoard(true);
+            board.printBoard(white);
 
         }
 
@@ -64,6 +65,10 @@ public class WebsocketFacade extends Endpoint {
 
     public void sendCommand(String command){
         this.session.getAsyncRemote().sendText(command);
+    }
+
+    public void setColor(boolean isWhite){
+        white = isWhite;
     }
 
     @Override
