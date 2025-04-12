@@ -231,8 +231,24 @@ public class WebSocketHandler {
         try {
             System.out.println("RESIGN: " + authDataAccess.validAuthToken(authToken));
 
+            GameDataAccess gameDataAccess = new GameDataSQL();
+            ChessGame.TeamColor color = gameDataAccess.getUserColor(gameID, authDataAccess.validAuthToken(authToken));
+
+            if(color == null){
+                error(session, new Throwable("Cannot resign in a game you are observing!"));
+                return;
+            }
+
+            if(gameDataAccess.getGame(gameID).isOver()){
+                error(session, new Throwable("Cannot resign in a game that has already ended!"));
+                return;
+            }
+
+            gameDataAccess.resign(gameID, authDataAccess.validAuthToken(authToken));
+
             String message = authDataAccess.validAuthToken(authToken) + " has resigned game " + gameID + "!";
             broadcastMessage(session, gameID, message, false);
+            broadcastMessage(session, gameID, message, true);
         }
         catch (DataAccessException | IOException e){
             System.out.println("Couldn't retrieve username");
