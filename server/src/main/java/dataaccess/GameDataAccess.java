@@ -111,4 +111,9 @@ public class GameDataAccess {
         System.out.println("getUserColor only implemented in SQL");
         return null;
     }
+
+    public boolean leaveGame(int gameID, String s) {
+        System.out.println("leaveGame only implemented in SQL");
+        return false;
+    }
 }

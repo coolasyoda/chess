@@ -63,8 +63,17 @@ public class GameDataSQL extends GameDataAccess{
                     }
                     var white = rs.getString("whiteUsername");
                     var black = rs.getString("blackUsername");
+
                     var gameName = rs.getString("gameName");
                     var game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
+
+                    if(Objects.equals(username, white) && Objects.equals(playerColor, "WHITE")){
+                        return new GameData(gameID, white, black, gameName, game);
+                    }
+
+                    if(Objects.equals(username, black) && Objects.equals(playerColor, "BLACK")){
+                        return new GameData(gameID, white, black, gameName, game);
+                    }
 
                     if(Objects.equals(playerColor, "WHITE") && white.isEmpty()){
                         String update = "UPDATE games SET whiteUsername=? WHERE gameID=?";
@@ -82,7 +91,6 @@ public class GameDataSQL extends GameDataAccess{
                         ps.setInt(2, gameID);
                         ps.executeUpdate();
                         black = username;
-
                     }
                     else{
                         return null;
@@ -253,6 +261,45 @@ public class GameDataSQL extends GameDataAccess{
         }
 
         return null;
+    }
+
+    public boolean leaveGame(int gameID, String username) {
+        try (var conn = DatabaseManager.getConnection()) {
+            String query = "SELECT whiteUsername, blackUsername FROM games WHERE gameID=?";
+            try(var results = conn.prepareStatement(query)){
+                results.setInt(1, gameID);
+                try (var rs = results.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new DataAccessException("gameID not found");
+                    }
+                    var white = rs.getString("whiteUsername");
+                    var black = rs.getString("blackUsername");
+
+                    if(Objects.equals(white, username)){
+                        String update = "UPDATE games SET whiteUsername=? WHERE gameID=?";
+                        var ps = conn.prepareStatement(update);
+                        ps.setString(1, "");
+                        ps.setInt(2, gameID);
+                        ps.executeUpdate();
+                        return true;
+                    }
+                    else if(Objects.equals(black, username)){
+                        String update = "UPDATE games SET blackUsername=? WHERE gameID=?";
+                        var ps = conn.prepareStatement(update);
+                        ps.setString(1, "");
+                        ps.setInt(2, gameID);
+                        ps.executeUpdate();
+                        return true;
+                    }
+
+                    return false;
+                }
+
+            }
+
+        } catch (SQLException | DataAccessException e) {
+            return false;
+        }
     }
 
     public void clear(){

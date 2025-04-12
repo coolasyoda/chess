@@ -214,6 +214,12 @@ public class WebSocketHandler {
         AuthDataAccess authDataAccess = new AuthDataSQL();
         try {
             System.out.println("LEAVE: " + authDataAccess.validAuthToken(authToken));
+
+            GameDataAccess gameDataAccess = new GameDataSQL();
+            gameDataAccess.leaveGame(gameID, authDataAccess.validAuthToken(authToken));
+
+            System.out.println("GET COLOR AFTER LEAVE: " + gameDataAccess.getUserColor(gameID, authDataAccess.validAuthToken(authToken)));
+
             gameSessions.put(session, 0);
             String message = authDataAccess.validAuthToken(authToken) + " has left game " + gameID;
             broadcastMessage(session, gameID, message, false);
