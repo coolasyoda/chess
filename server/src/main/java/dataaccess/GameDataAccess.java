@@ -106,4 +106,9 @@ public class GameDataAccess {
         System.out.println("resign only implemented in SQL");
         return false;
     }
+
+    public ChessGame.TeamColor getUserColor(Integer gameID, String s) {
+        System.out.println("getUserColor only implemented in SQL");
+        return null;
+    }
 }

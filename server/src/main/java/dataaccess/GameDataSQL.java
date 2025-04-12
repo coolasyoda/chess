@@ -143,8 +143,6 @@ public class GameDataSQL extends GameDataAccess{
                         ChessGame game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
 
                         game.makeMove(move);
-
-
                         System.out.println(game.getBoard().boardToString(true));
 
                         // Update the game in the database
@@ -221,6 +219,40 @@ public class GameDataSQL extends GameDataAccess{
             System.out.println("Resign Failed SQL");
             return false;
         }
+    }
+
+    public ChessGame.TeamColor getUserColor(Integer gameID, String username) {
+
+        String white;
+        String black;
+
+        try (var conn = DatabaseManager.getConnection()) {
+            String query = "SELECT whiteUsername, blackUsername FROM games WHERE gameID=?";
+            try(var results = conn.prepareStatement(query)){
+                results.setInt(1, gameID);
+                try (var rs = results.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new DataAccessException("gameID not found");
+                    }
+                    white = rs.getString("whiteUsername");
+                    black = rs.getString("blackUsername");
+                }
+
+            }
+
+        } catch (SQLException | DataAccessException e) {
+            return null;
+        }
+
+
+        if(Objects.equals(username, white)){
+            return ChessGame.TeamColor.WHITE;
+        }
+        else if (Objects.equals(username, black)) {
+            return ChessGame.TeamColor.BLACK;
+        }
+
+        return null;
     }
 
     public void clear(){
