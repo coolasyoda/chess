@@ -144,9 +144,6 @@ public class GameDataSQL extends GameDataAccess{
 
                         game.makeMove(move);
 
-//                        if(game.isInCheckmate() )
-//                        game.getTeamTurn()
-
 
                         System.out.println(game.getBoard().boardToString(true));
 

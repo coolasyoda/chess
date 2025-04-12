@@ -147,10 +147,18 @@ public class WebSocketHandler {
 
             ChessGame game = gameDataAccess.getGame(gameID);
 
-            System.out.println("TEST!");
+            System.out.println("GAME OVER? " + game.isOver());
+            System.out.println(game.getBoard().boardToString(true));
 
             if(game.isOver()){
                 error(session, new Throwable("Game is over!"));
+                return;
+            }
+
+            game = gameDataAccess.makeMove(gameID, move);
+
+            if(game == null){
+                error(session, new Throwable("Invalid move!"));
                 return;
             }
 
@@ -158,7 +166,7 @@ public class WebSocketHandler {
             broadcastGame(session, gameID, game, true);
             broadcastMessage(session, gameID, message, false);
 
-            ChessGame.TeamColor color = game.getBoard().getPiece(move.getStartPosition()).getTeamColor();
+            ChessGame.TeamColor color = game.getBoard().getPiece(move.getEndPosition()).getTeamColor();
             System.out.println("COLOR: " + color.toString());
             ChessGame.TeamColor oppositeColor = null;
 
