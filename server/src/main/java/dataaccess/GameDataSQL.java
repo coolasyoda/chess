@@ -148,7 +148,7 @@ public class GameDataSQL extends GameDataAccess{
 
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        ChessGame game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
+                        ChessGame game = getGame(gameID);
 
                         game.makeMove(move);
                         System.out.println(game.getBoard().boardToString(true));
@@ -160,7 +160,7 @@ public class GameDataSQL extends GameDataAccess{
                         updatePs.setInt(2, gameID);
                         updatePs.executeUpdate();
 
-                        return game;
+                        return getGame(gameID);
                     } else {
                         throw new DataAccessException("Game not found");
                     }
@@ -171,7 +171,7 @@ public class GameDataSQL extends GameDataAccess{
             return null;
         }
         catch (InvalidMoveException moveException){
-            System.out.println("INVALID MOVE");
+            System.out.println("INVALID MOVE: " + moveException.getMessage());
             return null;
         }
     }

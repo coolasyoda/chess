@@ -154,9 +154,9 @@ public class ServerFacade {
             request.put("gameID", gameID);
             path = "/game/single";
 
-            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
-            PrintBoard board = new PrintBoard(game, null);
-            board.printBoard(playerType);
+//            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
+//            PrintBoard board = new PrintBoard(game, null);
+//            board.printBoard(playerType);
             listFacade(false);
 
             if(!playerType){
@@ -230,18 +230,12 @@ public class ServerFacade {
         request.put("gameID", gameID);
 
         var path = "/game/single";
-        try {
-            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
-            PrintBoard board = new PrintBoard(game, null);
-            board.printBoard(true);
-            UserGameCommand command = new ConnectCommand(authToken, Integer.parseInt(gameID), "observer");
-            ws.sendCommand(new Gson().toJson(command));
-            return true;
-        }
-        catch (ResponseException responseException){
-            System.out.println("CATCH");
-            return false;
-        }
+        //            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
+//            PrintBoard board = new PrintBoard(game, null);
+//            board.printBoard(true);
+        UserGameCommand command = new ConnectCommand(authToken, Integer.parseInt(gameID), "observer");
+        ws.sendCommand(new Gson().toJson(command));
+        return true;
 
     }
 
@@ -307,32 +301,26 @@ public class ServerFacade {
 
         request.put("move", moveObject);
 
-        try{
-            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
+        //            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
 
-            ChessGame.TeamColor color = game.getBoard().getPiece(move.getEndPosition()).getTeamColor();
-            ChessGame.TeamColor oppositeColor = null;
+//            ChessGame.TeamColor color = game.getBoard().getPiece(move.getEndPosition()).getTeamColor();
+//            ChessGame.TeamColor oppositeColor = null;
+//
+//            if(color == ChessGame.TeamColor.WHITE){
+//                oppositeColor = ChessGame.TeamColor.BLACK;
+//            }
+//            else {
+//                oppositeColor = ChessGame.TeamColor.WHITE;
+//            }
 
-            if(color == ChessGame.TeamColor.WHITE){
-                oppositeColor = ChessGame.TeamColor.BLACK;
-            }
-            else {
-                oppositeColor = ChessGame.TeamColor.WHITE;
-            }
+//            PrintBoard board = new PrintBoard(game, null);
+//            board.printBoard(!black);
 
-            PrintBoard board = new PrintBoard(game, null);
-            board.printBoard(!black);
+        MakeMoveCommand command = new MakeMoveCommand(authToken, gameID, move);
+        ws.sendCommand(new Gson().toJson(command));
 
-            MakeMoveCommand command = new MakeMoveCommand(authToken, (Integer) gameID, move);
-            ws.sendCommand(new Gson().toJson(command));
+        return true;
 
-            return true;
-        }
-        catch (ResponseException e){
-            System.out.println("This is not a legal move!");
-        }
-
-        return false;
     }
 
     public boolean redrawFacade(Integer gameID){
@@ -395,22 +383,9 @@ public class ServerFacade {
         }
     }
     public boolean resignFacade(Integer gameID){
-        var path = "/game/resign";
-        Map<String, Object> request = new HashMap<>();
-        request.put("gameID", gameID);
-        try {
-            if(!this.makeRequest("PUT", path, request, boolean.class)){
-                System.out.println("Resign Failed!");
-                return false;
-            }
-            ResignCommand command = new ResignCommand(authToken, gameID);
-            ws.sendCommand(new Gson().toJson(command));
-            return true;
-        }
-        catch (ResponseException responseException){
-            System.out.println("RESIGN CATCH");
-            return false;
-        }
+        ResignCommand command = new ResignCommand(authToken, gameID);
+        ws.sendCommand(new Gson().toJson(command));
+        return true;
     }
     public boolean leaveFacade(Integer gameID){
         LeaveCommand command = new LeaveCommand(authToken, gameID);

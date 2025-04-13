@@ -51,7 +51,7 @@ public class GameDataAccessSQLTest {
         GameData gameData = new GameData(null, null, null, "testGame", game);
         GameData newGame = gameDataAccess.newGame(gameData);
 
-        GameData gameTest = new GameData(null, "user1", "user2", "testGame", game);
+        GameData gameTest = new GameData(1, "user1", "user2", "testGame", game);
 
         gameDataAccess.joinGame(newGame.gameID(), "user1", "WHITE");
         newGame = gameDataAccess.joinGame(newGame.gameID(), "user2", "BLACK");

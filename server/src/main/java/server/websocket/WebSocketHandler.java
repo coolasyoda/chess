@@ -94,8 +94,9 @@ public class WebSocketHandler {
             System.out.println("CONNECT: " + authDataAccess.validAuthToken(authToken));
 
             GameDataAccess gameDataAccess = new GameDataSQL();
+            ChessGame game = gameDataAccess.getGame(gameID);
 
-            if(gameDataAccess.getGame(gameID) == null){
+            if(game == null){
                 error(session, new Throwable("Invalid game ID"));
                 return false;
             }
@@ -119,7 +120,7 @@ public class WebSocketHandler {
 
             gameSessions.put(session, gameID);
             broadcastMessage(session, gameID, message, false);
-            broadcastGame(session, gameID, new ChessGame(), true);
+            broadcastGame(session, gameID, game, true);
 
 
 
@@ -143,7 +144,7 @@ public class WebSocketHandler {
 
             String message = authDataAccess.validAuthToken(authToken) + " made move " + move + " in game " + gameID;
 
-            GameDataAccess gameDataAccess = new GameDataSQL();
+            GameDataSQL gameDataAccess = new GameDataSQL();
 
             ChessGame game = gameDataAccess.getGame(gameID);
 
@@ -200,6 +201,7 @@ public class WebSocketHandler {
 
             broadcastMessage(session, gameID, message, true);
             broadcastMessage(session, gameID, message, false);
+
 
         }
         catch (DataAccessException | IOException e){
@@ -263,7 +265,8 @@ public class WebSocketHandler {
 
     @OnWebSocketError
     public void error(Session session, Throwable cause) throws IOException {
-        session.getRemote().sendString(new Gson().toJson(new ErrorMessage("ERROR: " + cause.getMessage())));
+        System.out.println(cause.getMessage());
+        session.getRemote().sendString(new Gson().toJson(new ErrorMessage(cause.getMessage())));
     }
 
     public void broadcastMessage(Session session, Integer gameID, String message, boolean self) throws IOException {

@@ -8,6 +8,7 @@ import exception.ResponseException;
 import ui.PrintBoard;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
 
@@ -57,10 +58,14 @@ public class WebsocketFacade extends Endpoint {
             ChessGame game = gameMessage.getGame();
             PrintBoard board = new PrintBoard(game, null);
             board.printBoard(white);
-
-            ChessGame.TeamColor color = game.getTeamTurn();
-
         }
+
+        if(Objects.equals(jsonObject.get("serverMessageType").getAsString(), "ERROR")){
+            ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+            System.out.println("ERROR: " + errorMessage.getErrorMessage());
+        }
+
+//        System.out.println("MESSAGE PARSE: " + message);
     }
 
     public void sendCommand(String command){

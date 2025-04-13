@@ -233,7 +233,7 @@ public class ChessClient {
             ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), startColumn);
             ChessPosition end = new ChessPosition(Integer.parseInt(String.valueOf(params[1].charAt(1))), endColumn);
 
-            ChessPiece.PieceType piece = ChessPiece.PieceType.QUEEN;
+            ChessPiece.PieceType piece = null;
             if(params.length == 3){
                 String promotionPiece = params[2];
                 if(Objects.equals(promotionPiece, "knight")){
@@ -244,6 +244,10 @@ public class ChessClient {
                 }
                 else if(Objects.equals(promotionPiece, "rook")){
                     piece = ChessPiece.PieceType.ROOK;
+                }
+                else {
+                    piece = ChessPiece.PieceType.QUEEN;
+
                 }
             }
 

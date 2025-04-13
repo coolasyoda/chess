@@ -90,12 +90,10 @@ public class ChessGame {
 
         ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) validMoves(move.getStartPosition());
         if(validMoves == null){
-            System.out.println("GAME IS OVER");
-            return;
+            throw new InvalidMoveException("GAME IS OVER");
         }
 
         for(int i=0; i<validMoves.size(); i++){
-            validMoves.get(i).toString();
             if(validMoves.get(i).equals(move) && tryMove(move)){
                 movePiece(move);
 
@@ -115,6 +113,7 @@ public class ChessGame {
             } else if (validMoves.get(i).equals(move) && !tryMove(move)) {
                 throw new InvalidMoveException("PUTS KING IN CHECK");
             }
+
         }
 
         throw new InvalidMoveException("INVALID MOVE");
@@ -131,8 +130,6 @@ public class ChessGame {
                 tempBoard.addPiece(tempPosition, board.getPiece(tempPosition));
             }
         }
-
-
 
         tempGame.setBoard(tempBoard);
         tempGame.movePiece(move);
