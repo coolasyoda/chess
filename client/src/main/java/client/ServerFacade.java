@@ -267,40 +267,6 @@ public class ServerFacade {
             return false;
         }
 
-        path = "/game/move";
-
-        request.clear();
-        request.put("gameID", gameID);
-
-        Map<String, Integer> start = new HashMap<>();
-        start.put("row", move.getStartPosition().getRow());
-        start.put("col", move.getStartPosition().getColumn());
-
-        Map<String, Integer> end = new HashMap<>();
-        end.put("row", move.getEndPosition().getRow());
-        end.put("col", move.getEndPosition().getColumn());
-
-        Map<String, Object> moveObject = new HashMap<>();
-        moveObject.put("start", start);
-        moveObject.put("end", end);
-        moveObject.put("promotion", move.getPromotionPiece());
-
-        request.put("move", moveObject);
-
-        //            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
-
-//            ChessGame.TeamColor color = game.getBoard().getPiece(move.getEndPosition()).getTeamColor();
-//            ChessGame.TeamColor oppositeColor = null;
-//
-//            if(color == ChessGame.TeamColor.WHITE){
-//                oppositeColor = ChessGame.TeamColor.BLACK;
-//            }
-//            else {
-//                oppositeColor = ChessGame.TeamColor.WHITE;
-//            }
-
-//            PrintBoard board = new PrintBoard(game, null);
-//            board.printBoard(!black);
 
         MakeMoveCommand command = new MakeMoveCommand(authToken, gameID, move);
         ws.sendCommand(new Gson().toJson(command));
