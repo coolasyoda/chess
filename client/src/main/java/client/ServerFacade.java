@@ -150,13 +150,6 @@ public class ServerFacade {
             UserGameCommand command = new ConnectCommand(authToken, (Integer) gameID, color);
             ws.sendCommand(new Gson().toJson(command));
 
-            request.clear();
-            request.put("gameID", gameID);
-            path = "/game/single";
-
-//            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
-//            PrintBoard board = new PrintBoard(game, null);
-//            board.printBoard(playerType);
             listFacade(false);
 
             if(!playerType){
@@ -226,13 +219,6 @@ public class ServerFacade {
 
         var realGameID = games.get((Integer.parseInt(gameID))-1).get("gameID");
 
-        Map<String, Object> request = new HashMap<>();
-        request.put("gameID", gameID);
-
-        var path = "/game/single";
-        //            ChessGame game = this.makeRequest("PUT", path, request, ChessGame.class);
-//            PrintBoard board = new PrintBoard(game, null);
-//            board.printBoard(true);
         UserGameCommand command = new ConnectCommand(authToken, Integer.parseInt(gameID), "observer");
         ws.sendCommand(new Gson().toJson(command));
         return true;
