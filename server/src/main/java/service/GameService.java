@@ -50,7 +50,7 @@ public class GameService {
 
     public ChessGame getGame(Integer gameID){
         System.out.println("Service getGame");
-        return gameDataAccess.getGame(gameID);
+        return gameDataAccess.getGame(gameID).chessGame();
     }
 
     public boolean resign(int gameID, String authToken) throws DataAccessException {

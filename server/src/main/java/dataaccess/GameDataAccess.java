@@ -97,7 +97,7 @@ public class GameDataAccess {
     }
 
 
-    public ChessGame getGame(Integer gameID) {
+    public GameData getGame(Integer gameID) {
         System.out.println("getGame only implemented in SQL");
         return null;
     }

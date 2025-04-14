@@ -148,7 +148,7 @@ public class GameDataSQL extends GameDataAccess{
 
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        ChessGame game = getGame(gameID);
+                        ChessGame game = getGame(gameID).chessGame();
 
                         game.makeMove(move);
                         System.out.println(game.getBoard().boardToString(true));
@@ -160,7 +160,7 @@ public class GameDataSQL extends GameDataAccess{
                         updatePs.setInt(2, gameID);
                         updatePs.executeUpdate();
 
-                        return getGame(gameID);
+                        return getGame(gameID).chessGame();
                     } else {
                         throw new DataAccessException("Game not found");
                     }
@@ -176,15 +176,20 @@ public class GameDataSQL extends GameDataAccess{
         }
     }
 
-    public ChessGame getGame(Integer gameID){
+    public GameData getGame(Integer gameID){
         System.out.println("service getGame");
         try (var conn = DatabaseManager.getConnection()) {
-            String query = "SELECT gameID, game FROM games WHERE gameID=?";
+            String query = "SELECT game, whiteUsername, blackUsername, gameName FROM games WHERE gameID=?";
             try (var ps = conn.prepareStatement(query)) {
                 ps.setInt(1, gameID);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return new Gson().fromJson(rs.getString("game"), ChessGame.class);
+                        String whiteUsername = rs.getString("whiteUsername");
+                        String blackUsername = rs.getString("blackUsername");
+                        String gameName = rs.getString("gameName");
+                        ChessGame chessGame = new Gson().fromJson(rs.getString("game"), ChessGame.class);
+
+                        return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
                     } else {
                         throw new DataAccessException("Game not found");
                     }
@@ -199,7 +204,7 @@ public class GameDataSQL extends GameDataAccess{
     public boolean resign(int gameID, String username) {
         System.out.println("SQL RESIGN");
 
-        ChessGame game = getGame(gameID);
+        ChessGame game = getGame(gameID).chessGame();
         game.setIsOver();
 
         try (var conn = DatabaseManager.getConnection()) {

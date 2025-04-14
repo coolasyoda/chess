@@ -224,14 +224,17 @@ public class ChessClient {
 
             int startColumn = letterToIndex(params[0].charAt(0));
             int endColumn = letterToIndex(params[1].charAt(0));
+            int startRow = Integer.parseInt(String.valueOf(params[0].charAt(1)));
+            int endRow = Integer.parseInt(String.valueOf(params[1].charAt(1)));
 
-            if(startColumn == 0 || endColumn == 0){
+            if(startColumn == 0 || endColumn == 0 || startRow > 8 || startRow <= 0 || endRow > 8 || endRow <= 0){
                 System.out.println("Please enter valid positions (A8, b4, etc)");
+                return 0;
             }
 
 
-            ChessPosition start = new ChessPosition(Integer.parseInt(String.valueOf(params[0].charAt(1))), startColumn);
-            ChessPosition end = new ChessPosition(Integer.parseInt(String.valueOf(params[1].charAt(1))), endColumn);
+            ChessPosition start = new ChessPosition(startRow, startColumn);
+            ChessPosition end = new ChessPosition(endRow, endColumn);
 
             ChessPiece.PieceType piece = null;
             if(params.length == 3){
@@ -334,8 +337,8 @@ public class ChessClient {
             System.out.println("""
                     - redraw - to redraw the chess board
                     - leave - leave the game
-                    - move <START> <END> <PROMOTION PIECE> - to move a piece. You can leave <PROMOTION PIECE> empty
-                                                              unless you want to specify a piece for pawn promotion.
+                    - move <START> <END> <PROMOTION PIECE> - to move a piece. Please enter a <PROMOTION PIECE>
+                                                              upon a pawn promotion.
                     - resign - to forfeit the match
                     - legal <START> - to highlight legal moves
                     - help

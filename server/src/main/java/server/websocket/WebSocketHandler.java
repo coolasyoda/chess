@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
@@ -94,7 +95,7 @@ public class WebSocketHandler {
             System.out.println("CONNECT: " + authDataAccess.validAuthToken(authToken));
 
             GameDataAccess gameDataAccess = new GameDataSQL();
-            ChessGame game = gameDataAccess.getGame(gameID);
+            ChessGame game = gameDataAccess.getGame(gameID).chessGame();
 
             if(game == null){
                 error(session, new Throwable("Invalid game ID"));
@@ -146,7 +147,7 @@ public class WebSocketHandler {
 
             GameDataSQL gameDataAccess = new GameDataSQL();
 
-            ChessGame game = gameDataAccess.getGame(gameID);
+            ChessGame game = gameDataAccess.getGame(gameID).chessGame();
 
 
             if(game.isOver()){
@@ -184,12 +185,25 @@ public class WebSocketHandler {
                 oppositeColor = ChessGame.TeamColor.WHITE;
             }
 
+            GameData gameData = gameDataAccess.getGame(gameID);
+
             if(game.isInCheckmate(oppositeColor)){
-                message = "Checkmate! " + authDataAccess.validAuthToken(authToken) + " won game " + gameID;
+                if(oppositeColor == ChessGame.TeamColor.WHITE){
+                    message = gameData.whiteUsername();
+                }else{
+                    message = gameData.blackUsername();
+                }
+                message = authDataAccess.validAuthToken(authToken) + " has placed " + message + " in checkmate!";
 
             }
             else if(game.isInCheck(oppositeColor)){
-                message = "Check!";
+                if(oppositeColor == ChessGame.TeamColor.WHITE){
+                    message = gameData.whiteUsername();
+                }else{
+                    message = gameData.blackUsername();
+                }
+
+                message = message + " is in Check!";
 
             }
             else if(game.isInStalemate(oppositeColor)){
@@ -247,7 +261,7 @@ public class WebSocketHandler {
                 return;
             }
 
-            if(gameDataAccess.getGame(gameID).isOver()){
+            if(gameDataAccess.getGame(gameID).chessGame().isOver()){
                 error(session, new Throwable("Cannot resign in a game that has already ended!"));
                 return;
             }
